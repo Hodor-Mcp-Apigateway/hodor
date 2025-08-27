@@ -20,10 +20,10 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
         SendMoneyCommand request,
         CancellationToken cancellationToken)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
         try
         {
-            using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-
             var sourceAccount = await _context.Accounts
                 .Where(account => account.AccountId == request.SourceAccountId && account.TenantId == request.TenantId)
                 .FirstOrDefaultAsync(cancellationToken);
