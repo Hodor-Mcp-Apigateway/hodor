@@ -1,6 +1,7 @@
 namespace Papel.Integration.Persistence.PostgreSQL.Extensions;
 
 using Configuration;
+using Microsoft.Extensions.Options;
 
 public static class ServiceCollectionExtension
 {
@@ -17,12 +18,14 @@ public static class ServiceCollectionExtension
     {
         configuration.ThrowIfNull(nameof(configuration));
 
-        services.AddWithValidation<PostgresConnection, PostgresConnectionValidator>(
-            configuration.GetSection(DbConfigurationSection.SectionName));
+        services.AddOptions<PostgresConnection>()
+            .Bind(configuration.GetSection(DbConfigurationSection.SectionName))
+            .ValidateFluently()
+            .ValidateOnStart();
 
-        services.AddScoped<IValidator<PostgresConnection>, PostgresConnectionValidator>();
+        services.AddSingleton<IValidator<PostgresConnection>, PostgresConnectionValidator>();
 
-        ConfigureDbContextFactory(services,optionsBuilder);
+        ConfigureDbContextFactory(services, optionsBuilder, configuration);
 
         services.TryAddScoped<IDbInitializer, DbInitializer>();
         services.TryAddScoped<ApplicationDbContextFactory>();
@@ -43,37 +46,45 @@ public static class ServiceCollectionExtension
     }
 
     private static IServiceCollection ConfigureDbContextFactory(this IServiceCollection services,
-        Action<IServiceProvider, DbContextOptionsBuilder>? optionsBuilder = null)
+        Action<IServiceProvider, DbContextOptionsBuilder>? optionsBuilder,
+        IConfiguration configuration)
     {
-        using var serviceProvider = services.BuildServiceProvider();
-        var config = serviceProvider.GetRequiredService<IOptions<PostgresConnection>>();
+        var connectionString = configuration.GetConnectionString("PostgreSQL")
+            ?? configuration[$"{DbConfigurationSection.SectionName}:ConnectionString"];
 
-        services.AddEntityFrameworkNpgsql()
-            .AddPooledDbContextFactory<ApplicationDbContext>(optionsAction: (provider, options) =>
+        services.AddPooledDbContextFactory<ApplicationDbContext>((provider, options) =>
+        {
+            optionsBuilder?.Invoke(provider, options);
+
+            options.UseNpgsql(connectionString, npgsqlOptions =>
             {
-                optionsBuilder?.Invoke(provider, options);
-
-                options.UseInternalServiceProvider(provider);
-                options.UseNpgsql(config.Value.ConnectionString);
-
-                if (config.Value.LoggingEnabled)
-                {
-                    options.EnableDbLogging();
-                }
+                npgsqlOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
+                npgsqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorCodesToAdd: null);
             });
 
-        if (config.Value.HealthCheckEnabled)
+            // Internal service provider kullanma - gerekirse aç
+            // options.UseInternalServiceProvider(provider);
+
+            var postgresConfig = provider.GetService<IOptions<PostgresConnection>>()?.Value;
+            if (postgresConfig?.LoggingEnabled == true)
+            {
+                options.EnableDbLogging();
+            }
+        });
+
+        if (!string.IsNullOrEmpty(connectionString))
         {
-            services.AddHealthChecks().AddNpgSql(config.Value.ConnectionString);
+            services.AddHealthChecks()
+                .AddNpgSql(connectionString, name: "postgresql", tags: new[] { "db", "sql", "ready" });
         }
 
         return services;
     }
 
     private static DbContextOptionsBuilder EnableDbLogging(this DbContextOptionsBuilder builder) => builder
-            .LogTo(
-                msg => Log.Logger.Information("{Msg}",msg),
-                [DbLoggerCategory.Database.Name,])
-            .EnableDetailedErrors()
-            .EnableSensitiveDataLogging();
+        .LogTo(
+            msg => Log.Logger.Information("{Msg}", msg),
+            new[] { DbLoggerCategory.Database.Name })
+        .EnableDetailedErrors()
+        .EnableSensitiveDataLogging();
 }

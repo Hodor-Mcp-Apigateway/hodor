@@ -1,5 +1,3 @@
-using Papel.Integration.Common.Extensions;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var envFileName = $".env.{builder.Environment.EnvironmentName}";
@@ -56,20 +54,6 @@ builder.Services.AddOpenTelemetry()
 var app = builder.Build();
 
 var scope = app.Services.CreateAsyncScope();
-await using (scope.ConfigureAwait(false))
-{
-    try
-    {
-        var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-        await context.MigrateAsync().ConfigureAwait(false);
-        await context.SeedAsync().ConfigureAwait(false);
-    }
-    catch (Exception exception)
-    {
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        logger.MigrationError(exception);
-    }
-}
 
 app.UseRestPresentation(configuration, environment)
     .UseRouting();

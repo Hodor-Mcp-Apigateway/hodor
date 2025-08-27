@@ -15,7 +15,6 @@ global using Microsoft.EntityFrameworkCore.ChangeTracking;
 global using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 global using Microsoft.Extensions.DependencyInjection.Extensions;
 global using Microsoft.Extensions.Options;
-global using NKZSoft.FluentValidation.Options;
 global using Papel.Integration.Application.Common.Interfaces;
 global using Papel.Integration.Common.Extensions;
 global using Papel.Integration.Domain.AggregatesModel.ToDoAggregates.Entities;

@@ -9,7 +9,6 @@ global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 global using NKZSoft.Service.Configuration.Logger;
 global using Papel.Integration.Application;
-global using Papel.Integration.Application.Common.Interfaces;
 global using Papel.Integration.EFCore.Caching.Redis.Extensions;
 global using Papel.Integration.Infrastructure.Core;
 global using Papel.Integration.MessageBrokers.RabbitMq.Extensions;

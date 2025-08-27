@@ -1,12 +1,12 @@
 ﻿namespace Papel.Integration.EFCore.Caching.Redis.Extensions;
 
 using Configuration;
+using Validations;
 
 public static class ServiceCollectionExtensions
 {
     private const string ProviderName = "EFCoreCahce";
     private const string SerializerName = "proto";
-
     private const string EfPrefix = "EF_";
 
     /// <summary>
@@ -21,9 +21,16 @@ public static class ServiceCollectionExtensions
         services.ThrowIfNull();
         configuration.ThrowIfNull();
 
-        services.AddWithValidation<RedisConnection, RedisConnectionValidator>(
-            configuration.GetSection(CacheConfigurationSection.SectionName));
+        // ÖNCE options ve validation ekle
+        services.AddOptions<RedisConnection>()
+            .Bind(configuration.GetSection(CacheConfigurationSection.SectionName))
+            .ValidateFluentValidation()
+            .ValidateOnStart();
 
+        // Validator'ı singleton olarak kaydet
+        services.AddSingleton<IValidator<RedisConnection>, RedisConnectionValidator>();
+
+        // EFCore second level cache
         services.AddEFSecondLevelCache(options =>
             options.UseEasyCachingCoreProvider(ProviderName, isHybridCache: false)
                 .CacheAllQueries(CacheExpirationMode.Absolute, TimeSpan.FromMinutes(30))
@@ -31,24 +38,31 @@ public static class ServiceCollectionExtensions
                 .UseCacheKeyPrefix(EfPrefix)
         );
 
+        // EasyCaching configuration - BuildServiceProvider KULLANMA
         services.AddEasyCaching(option =>
         {
-            using var serviceProvider = services.BuildServiceProvider();
-            var options = serviceProvider.GetRequiredService<IOptions<RedisConnection>>();
+            // Configuration'ı direkt IConfiguration'dan al
+            var redisConfig = configuration.GetSection(CacheConfigurationSection.SectionName).Get<RedisConnection>();
+
+            if (string.IsNullOrEmpty(redisConfig?.ConnectionString))
+            {
+                throw new InvalidOperationException("Redis connection string is not configured");
+            }
 
             option.WithJson(SerializerName);
             option.UseRedis(config =>
             {
-                config.DBConfig.ConfigurationOptions
-                    = ConfigurationOptions.Parse(options.Value.ConnectionString);
+                config.DBConfig.ConfigurationOptions = ConfigurationOptions.Parse(redisConfig.ConnectionString);
                 config.SerializerName = SerializerName;
             }, ProviderName);
 
-            if (options.Value.HealthCheckEnabled)
+            // Health check'i ayrıca ekle
+            if (redisConfig.HealthCheckEnabled)
             {
-                services.AddHealthChecks().AddRedis(options.Value.ConnectionString!, ProviderName);
+                services.AddHealthChecks().AddRedis(redisConfig.ConnectionString, ProviderName);
             }
         });
+
         return services;
     }
 }

@@ -32,7 +32,6 @@ global using Papel.Integration.Application.TodoItems.Queries.GetPage;
 global using Papel.Integration.Common;
 global using NKZSoft.Service.Configuration.Swagger;
 global using Papel.Integration.Application.TodoItems.Queries.GetItem;
-global using Papel.Integration.Application.TodoItems.Queries.GetItemFromRedis;
 global using Papel.Integration.Presentation.Rest.Models.Result;
 global using OpenTelemetry.Trace;
 global  using Serilog;

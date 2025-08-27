@@ -8,4 +8,8 @@
     <ProjectReference Include="..\Papel.Integration.Application\Papel.Integration.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Validations\" />
+  </ItemGroup>
+
 </Project>
