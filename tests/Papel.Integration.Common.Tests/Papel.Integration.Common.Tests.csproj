@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Papel.Integration.Application\Papel.Integration.Application.csproj" />
+      <ProjectReference Include="..\..\src\Papel.Integration.Infrastructure.Core\Papel.Integration.Infrastructure.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Moq" />
+      <PackageReference Include="Serilog.Extensions.Hosting" />
+      <PackageReference Include="Serilog.Sinks.Console" />
+      <PackageReference Include="Testcontainers" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" />
+      <PackageReference Include="xunit.v3.extensibility.core" />
+      <PackageReference Update="Microsoft.SourceLink.GitHub" />
+    </ItemGroup>
+
+</Project>

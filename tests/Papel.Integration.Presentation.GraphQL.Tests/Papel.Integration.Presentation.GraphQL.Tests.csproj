@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="RestSharp" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="AwesomeAssertions" />
+    <PackageReference Include="Moq" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <ProjectReference Include="..\..\src\Papel.Integration.Presentation.Starter\Papel.Integration.Presentation.Starter.csproj" />
+      <ProjectReference Include="..\Papel.Integration.Common.Tests\Papel.Integration.Common.Tests.csproj" />
+    </ItemGroup>
+
+</Project>

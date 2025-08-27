@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <Version>1.1.0</Version>
+      <AssemblyName>Papel.Integration.Presentation.Grpc</AssemblyName>
+      <RootNamespace>Papel.Integration.Presentation.Grpc</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Papel.Integration.Application\Papel.Integration.Application.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Google.Protobuf" />
+      <PackageReference Include="OpenTelemetry" />
+      <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" />
+      <PackageReference Include="protobuf-net" />
+      <PackageReference Include="protobuf-net.Grpc.AspNetCore" />
+      <PackageReference Include="protobuf-net.Grpc.AspNetCore.Reflection" />
+      <PackageReference Include="protobuf-net.Reflection" />
+      <PackageReference Include="System.ServiceModel.Primitives" />
+      <PackageReference Include="NKZSoft.Service.Configuration.Grpc" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageVersion Update="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.0.0-rc9.14" />
+    </ItemGroup>
+
+</Project>

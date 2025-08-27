@@ -1,0 +1,25 @@
+﻿namespace Papel.Integration.Application.Common.Interfaces;
+
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
+public interface IApplicationDbContext
+{
+#pragma warning disable CA1716
+    DbSet<T> Set<T>()
+#pragma warning restore CA1716
+        where T : class;
+
+    DbContext AppDbContext { get; }
+    DatabaseFacade Database { get; }
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+
+    Task MigrateAsync();
+
+    DbSet<Account> Accounts { get; }
+    DbSet<Txn> Txns { get; }
+    DbSet<Customer> Customers { get; }
+    DbSet<LoadMoneyRequest> LoadMoneyRequests { get; }
+    DbSet<ToDoItem> ToDoItems { get; }
+    DbSet<ToDoList> ToDoLists { get; }
+    Task SeedAsync();
+}

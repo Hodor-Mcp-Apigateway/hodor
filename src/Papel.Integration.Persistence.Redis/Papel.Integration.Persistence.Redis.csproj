@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+      <PackageReference Include="AspNetCore.HealthChecks.Redis" />
+      <PackageReference Include="EasyCaching.Redis" />
+      <PackageReference Include="EasyCaching.Serialization.Json" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+      <PackageReference Include="NKZSoft.FluentValidation.Options" />
+      <PackageReference Include="StackExchange.Redis" />
+      <PackageReference Include="Scrutor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Papel.Integration.Application\Papel.Integration.Application.csproj" />
+      <ProjectReference Include="..\Papel.Integration.Common\Papel.Integration.Common.csproj" />
+    </ItemGroup>
+
+</Project>

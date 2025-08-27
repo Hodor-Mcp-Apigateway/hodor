@@ -1,0 +1,17 @@
+﻿global using System.Collections.Frozen;
+global using System.Diagnostics.CodeAnalysis;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Xunit;
+global using MediatR;
+global using Moq;
+global using DotNet.Testcontainers.Builders;
+global using DotNet.Testcontainers.Configurations;
+global using DotNet.Testcontainers.Containers;
+global using Microsoft.Extensions.DependencyInjection.Extensions;
+global using Papel.Integration.Application.Common.Interfaces;
+global using Papel.Integration.Common.Tests.Containers;
+global using Papel.Integration.Infrastructure.Core.Services;
+global using Testcontainers.PostgreSql;
+global using Testcontainers.RabbitMq;
+global using Testcontainers.Redis;

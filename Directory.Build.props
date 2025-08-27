@@ -1,0 +1,48 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <Features>strict</Features>    
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-Recommended</AnalysisLevel>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1902;NU1903;NU1904;NETSDK1206;xUnit1028;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
+    <PackageReference Include="Meziantou.Analyzer" PrivateAssets="All"/>
+    <PackageReference Include="Roslynator.Analyzers" PrivateAssets="All"/>
+    <PackageReference Include="Roslynator.CodeAnalysis.Analyzers" PrivateAssets="All"/>
+    <PackageReference Include="Roslynator.Formatting.Analyzers"  PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" PrivateAssets="All"/>
+    <PackageReference Include="AsyncAwaitBestPractices" PrivateAssets="All"/>
+    <PackageReference Include="SerilogAnalyzer" PrivateAssets="All"/>
+    <PackageReference Include="CSharpGuidelinesAnalyzer" PrivateAssets="All"/>
+  </ItemGroup>
+
+</Project>

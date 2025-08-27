@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Version>1.1.5</Version>
+    <AssemblyName>Papel.Integration.Presentation.Rest</AssemblyName>
+    <RootNamespace>Papel.Integration.Presentation.Rest</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" />
+    <PackageReference Include="NKZSoft.Service.Configuration.Logger" />
+    <PackageReference Include="NKZSoft.Service.Configuration.Swagger" />
+    <PackageReference Include="OpenTelemetry.Api" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Papel.Integration.Application\Papel.Integration.Application.csproj" />
+    <ProjectReference Include="..\Papel.Integration.Common\Papel.Integration.Common.csproj" />
+    <ProjectReference Include="..\Papel.Integration.Infrastructure.Core\Papel.Integration.Infrastructure.Core.csproj" />
+    <ProjectReference Include="..\Papel.Integration.Persistence.PostgreSQL\Papel.Integration.Persistence.PostgreSQL.csproj" />
+  </ItemGroup>
+
+
+</Project>

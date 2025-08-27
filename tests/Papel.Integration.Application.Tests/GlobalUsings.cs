@@ -1,0 +1,15 @@
+﻿global using Xunit;
+global using MediatR;
+global using Moq;
+global using FluentAssertions;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.DependencyInjection.Extensions;
+global using Papel.Integration.Application.Common.Paging;
+global using Papel.Integration.Application.Common.Repositories.PostgreSql;
+global using Papel.Integration.Application.Tests.Common;
+global using Papel.Integration.Application.TodoItems.Commands.Create;
+global using Papel.Integration.Application.TodoItems.Commands.Delete;
+global using Papel.Integration.Application.TodoItems.Models;
+global using Papel.Integration.Application.TodoItems.Queries.GetPage;
+global using Papel.Integration.Persistence.PostgreSQL.Repositories;
+global using Papel.Integration.Common.Extensions;

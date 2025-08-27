@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+      <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+      <PackageReference Include="NKZSoft.Service.Configuration.MassTransit.RabbitMq" />
+      <PackageReference Include="OpenTelemetry.Api" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Papel.Integration.Common\Papel.Integration.Common.csproj" />
+      <ProjectReference Include="..\Papel.Integration.Events\Papel.Integration.Events.csproj" />
+    </ItemGroup>
+  
+</Project>

@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="xunit.v3" />
+        <PackageReference Include="Xunit.DependencyInjection" />
+        <PackageReference Include="xunit.runner.visualstudio">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="AwesomeAssertions" />
+        <PackageReference Include="Moq" />
+        <PackageReference Include="Respawn" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+        <PackageReference Update="Microsoft.SourceLink.GitHub" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Papel.Integration.Application\Papel.Integration.Application.csproj" />
+        <ProjectReference Include="..\..\src\Papel.Integration.Infrastructure.Core\Papel.Integration.Infrastructure.Core.csproj" />
+        <ProjectReference Include="..\..\src\Papel.Integration.Persistence.PostgreSQL\Papel.Integration.Persistence.PostgreSQL.csproj" />
+        <ProjectReference Include="..\Papel.Integration.Common.Tests\Papel.Integration.Common.Tests.csproj" />
+    </ItemGroup>
+
+</Project>

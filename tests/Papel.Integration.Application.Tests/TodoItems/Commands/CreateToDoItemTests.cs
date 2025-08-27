@@ -1,0 +1,21 @@
+﻿namespace Papel.Integration.Application.Tests.TodoItems.Commands;
+
+[Collection("QueryCollection")]
+public sealed class CreateToDoItemTests : TestBase
+{
+    private const string ToDoItemTitle = "Title";
+
+    public CreateToDoItemTests(QueryTestFixture fixture) : base(fixture)
+    {
+    }
+
+    [Fact]
+    public async Task ShouldCreateTodoItem()
+    {
+        var command = new CreateToDoItemCommand(ToDoItemTitle, ListId: null);
+        var result = await Mediator.Send(command, TestContext.Current.CancellationToken);
+
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+    }
+}

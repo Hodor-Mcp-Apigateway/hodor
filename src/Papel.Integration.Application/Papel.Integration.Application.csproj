@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Ardalis.Specification" />
+        <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" />
+        <PackageReference Include="FluentResults" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="Mapster" />
+        <PackageReference Include="Mapster.Async" />
+        <PackageReference Include="Mapster.DependencyInjection" />
+        <PackageReference Include="MediatR" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Update="Microsoft.SourceLink.GitHub" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Papel.Integration.Common\Papel.Integration.Common.csproj" />
+      <ProjectReference Include="..\Papel.Integration.Domain\Papel.Integration.Domain.csproj" />
+      <ProjectReference Include="..\Papel.Integration.MessageBrokers.RabbitMq\Papel.Integration.MessageBrokers.RabbitMq.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Wallet\Models\" />
+      <Folder Include="Wallet\Queries\" />
+    </ItemGroup>
+
+    <Target Name="CleanGenerated">
+        <Delete Files="@(Generated)" />
+    </Target>
+
+</Project>
