@@ -29,17 +29,17 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (sourceAccount == null)
-                return Result.Fail("Source account not found");
+                return Result.Fail<SendMoneyResponse>("Source account not found");
 
             var destinationAccount = await _context.Accounts
                 .Where(account => account.AccountId == request.DestinationAccountId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (destinationAccount == null)
-                return Result.Fail("Destination account not found");
+                return Result.Fail<SendMoneyResponse>("Destination account not found");
 
             if (sourceAccount.Balance < request.Amount)
-                return Result.Fail("Insufficient balance");
+                return Result.Fail<SendMoneyResponse>("Insufficient balance");
 
             var oldSourceBalance = sourceAccount.Balance;
             var oldDestinationBalance = destinationAccount.Balance;

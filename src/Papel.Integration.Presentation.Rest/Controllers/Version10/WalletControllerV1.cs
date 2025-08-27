@@ -23,13 +23,4 @@ public class WalletControllerV1 : BaseController
         => (await Mediator.Send(command, cancellationToken).ConfigureAwait(false))
             .ToResultDto();
 
-    [HttpGet]
-    [Route("{id}")]
-    [ProducesResponseType(typeof(ResultDtoBase<ToDoItemDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResultDtoBase<Unit>), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ResultDtoBase<Unit>), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ResultDtoBase<Unit>), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ResultDtoBase<ToDoItemDto>>> GetAsync(Guid id, CancellationToken cancellationToken)
-        => (await Mediator.Send(new GetTodoItemQuery(id), cancellationToken).ConfigureAwait(false))
-            .ToResultDto();
 }

@@ -59,7 +59,7 @@ public static class ServiceCollectionExtension
             options.UseNpgsql(connectionString, npgsqlOptions =>
             {
                 npgsqlOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
-                npgsqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorCodesToAdd: null);
+                //npgsqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorCodesToAdd: null);
             });
 
             // Internal service provider kullanma - gerekirse aç
