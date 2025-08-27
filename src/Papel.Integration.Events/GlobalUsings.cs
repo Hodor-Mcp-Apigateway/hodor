@@ -1,2 +1,1 @@
-﻿global using System;
-global using Papel.Integration.Events.Interfaces;
+﻿global using Papel.Integration.Events.Interfaces;

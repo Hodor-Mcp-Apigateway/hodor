@@ -10,16 +10,13 @@ global using FluentResults;
 global using MediatR;
 global using Mapster;
 global using MapsterMapper;
-global using System.Linq.Expressions;
 global using Ardalis.Specification;
 global using FluentValidation.Results;
 global using MassTransit;
 global using MediatR.Pipeline;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.DependencyInjection.Extensions;
-global using Papel.Integration.Application.TodoItems.Specifications;
 global using Papel.Integration.Common.Extensions;
 
 global using Papel.Integration.Domain.AggregatesModel.ToDoAggregates.Entities;
 global using Papel.Integration.Domain.Events;
-global using Papel.Integration.Events.ToDoItem.Create;

@@ -19,7 +19,5 @@ public interface IApplicationDbContext
     DbSet<Txn> Txns { get; }
     DbSet<Customer> Customers { get; }
     DbSet<LoadMoneyRequest> LoadMoneyRequests { get; }
-    DbSet<ToDoItem> ToDoItems { get; }
-    DbSet<ToDoList> ToDoLists { get; }
-    Task SeedAsync();
+    //Task SeedAsync();
 }

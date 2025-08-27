@@ -1,7 +1,7 @@
 namespace Papel.Integration.Presentation.Rest.Tests.SeedData;
 internal sealed partial class SeedDataContext
 {
-    public static IEnumerable<ToDoItem> ToDoItems
+    /*public static IEnumerable<ToDoItem> ToDoItems
     {
         get
         {
@@ -11,5 +11,5 @@ internal sealed partial class SeedDataContext
             yield return new ToDoItem("TestItem_4", "Test Description_4");
             yield return new ToDoItem("TestItem_5", "Test Description_5");
         }
-    }
+    }*/
 }

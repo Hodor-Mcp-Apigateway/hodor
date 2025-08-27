@@ -27,4 +27,8 @@
       <ProjectReference Include="..\Papel.Integration.Common.Tests\Papel.Integration.Common.Tests.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\" />
+    </ItemGroup>
+
 </Project>

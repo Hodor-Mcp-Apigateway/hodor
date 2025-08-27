@@ -19,14 +19,12 @@ public static class ServiceCollectionExtensions
 
     private static void AddConsumers(IBusRegistrationConfigurator configurator)
     {
-        configurator.AddConsumer<ToDoItemCreatedIntegrationEventConsumer>();
-        configurator.AddConsumer<ToDoItemUpdatedIntegrationEventConsumer>();
+        configurator.AddConsumer<TransactionCompletedIntegrationEventConsumer>();
     }
 
     private static void AddReceiveEndpoints(IRabbitMqBusFactoryConfigurator factoryConfigurator, IRegistrationContext registrationContext) =>
         factoryConfigurator.ReceiveEndpoint(configure =>
         {
-            configure.ConfigureConsumer<ToDoItemCreatedIntegrationEventConsumer>(registrationContext);
-            configure.ConfigureConsumer<ToDoItemUpdatedIntegrationEventConsumer>(registrationContext);
+            configure.ConfigureConsumer<TransactionCompletedIntegrationEventConsumer>(registrationContext);
         });
 }

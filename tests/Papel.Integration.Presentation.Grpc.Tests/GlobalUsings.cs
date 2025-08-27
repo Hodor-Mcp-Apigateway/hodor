@@ -1,9 +1,5 @@
 global using Xunit;
 global using Grpc.Net.Client;
-global using FluentAssertions;
 global using ProtoBuf.Grpc.Client;
 global using Microsoft.AspNetCore.Hosting;
 global using Papel.Integration.Common.Tests;
-global using Papel.Integration.Presentation.Grpc.Services;
-global using Papel.Integration.Application.Common.Interfaces;
-global using Papel.Integration.Domain.AggregatesModel.ToDoAggregates.Entities;

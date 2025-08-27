@@ -2,7 +2,6 @@
 
 using Microsoft.Extensions.Options;
 using Persistence.PostgreSQL.Configuration;
-using SeedData;
 using Testcontainers.PostgreSql;
 
 public sealed class GrpcWebApplicationFactory<TStartup> : BaseWebApplicationFactory<TStartup> where TStartup : class
@@ -22,7 +21,7 @@ public sealed class GrpcWebApplicationFactory<TStartup> : BaseWebApplicationFact
         base.ConfigureWebHost(builder);
         builder.UseEnvironment(EnvironmentName)
             .ConfigureServices((_, services) => services
-                .Replace<IDbInitializer, SeedDataContext>()
+                //.Replace<IDbInitializer, SeedDataContext>()
                 .Replace(_ => AppMockFactory.CreateCurrentUserServiceMock())
                 .Replace(_ =>
                     Options.Create(new PostgresConnection()

@@ -1,12 +1,13 @@
 ﻿namespace Papel.Integration.Presentation.Grpc.Extensions;
 
-using Services;
+using ProtoBuf.Grpc.Server;
 
 public static class EndpointRouteBuilderExtension
 {
     public static IEndpointRouteBuilder MapGrpcEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapGrpcEndpoints<ToDoItemService>();
+        ArgumentNullException.ThrowIfNull( endpointRouteBuilder, nameof (endpointRouteBuilder));
+        endpointRouteBuilder.MapCodeFirstGrpcReflectionService();
         return endpointRouteBuilder;
     }
 }

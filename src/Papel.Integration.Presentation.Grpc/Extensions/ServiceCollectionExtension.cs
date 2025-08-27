@@ -1,5 +1,7 @@
 ﻿namespace Papel.Integration.Presentation.Grpc.Extensions;
 
+using Interceptor;
+using ProtoBuf.Grpc.Server;
 using Mapper = MapsterMapper.Mapper;
 
 public static class ServiceCollectionExtension
@@ -12,8 +14,9 @@ public static class ServiceCollectionExtension
 
         services.TryAddSingleton<IMapper>(new Mapper(typeAdapterConfig));
         services.TryAddSingleton<IMapper, ServiceMapper>();
+        services.AddCodeFirstGrpcReflection();
 
-        services.AddGrpcServer();
+        services.AddCodeFirstGrpc(opt => opt.Interceptors.Add<GrpcServerExceptionInterceptor>());
 
         return services;
     }

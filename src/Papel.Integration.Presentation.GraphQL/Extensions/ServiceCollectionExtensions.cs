@@ -15,7 +15,10 @@ public static class ServiceCollectionExtensions
         //see https://github.com/ChilliCream/hotchocolate/issues/1975
         services.AddGraphQLServer()
             .AddQueryType<Query>()
-            .AddType<QueryType<ToDoItem>>()
+            .AddType<QueryType<Txn>>()
+            .AddType<QueryType<Customer>>()
+            .AddType<QueryType<Account>>()
+            .AddType<QueryType<LoadMoneyRequest>>()
             .AddProjections()
             .AddFiltering()
             .AddSorting()

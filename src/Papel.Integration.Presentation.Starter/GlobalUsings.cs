@@ -7,7 +7,6 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-global using NKZSoft.Service.Configuration.Logger;
 global using Papel.Integration.Application;
 global using Papel.Integration.EFCore.Caching.Redis.Extensions;
 global using Papel.Integration.Infrastructure.Core;

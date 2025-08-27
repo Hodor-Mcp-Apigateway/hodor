@@ -1,6 +1,5 @@
 ﻿namespace Papel.Integration.Application.Tests.Common;
 using Papel.Integration.Application.Common.Interfaces;
-using SeedData;
 
 public class TestBase
 {
@@ -8,7 +7,7 @@ public class TestBase
 
     protected ICurrentUserService CurrentUserService { get;init; }
 
-    protected SeedDataContext SeedDataContext { get; init; }
+    //protected SeedDataContext SeedDataContext { get; init; }
 
     protected IMediator Mediator { get; init; }
 
@@ -17,6 +16,6 @@ public class TestBase
         Context = fixture.Context;
         Mediator = fixture.Mediator;
         CurrentUserService = fixture.CurrentUserService;
-        SeedDataContext = fixture.SeedDataContext;
+        //SeedDataContext = fixture.SeedDataContext;
     }
 }

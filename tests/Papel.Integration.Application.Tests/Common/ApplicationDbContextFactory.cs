@@ -1,7 +1,6 @@
 namespace Papel.Integration.Application.Tests.Common;
 using Microsoft.EntityFrameworkCore;
 using Papel.Integration.Application.Common.Interfaces;
-using SeedData;
 using Papel.Integration.Common.Tests;
 using Infrastructure.Core.Services;
 using Persistence.PostgreSQL;
@@ -16,13 +15,12 @@ public static class ApplicationDbContextFactory
 
         var context = new ApplicationDbContext(options);
         context.InitContext(
-            AppMockFactory.CreateCurrentUserServiceMock(),
-            new SeedDataContext(),
+            AppMockFactory.CreateCurrentUserServiceMock(),new DbInitializer(),
             new MachineDateTime(),
             AppMockFactory.CreateMediatorMock());
 
         await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
-        await context.SeedAsync().ConfigureAwait(false);
+        //await context.SeedAsync().ConfigureAwait(false);
 
         return context;
     }

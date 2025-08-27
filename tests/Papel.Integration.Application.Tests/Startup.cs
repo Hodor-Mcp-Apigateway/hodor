@@ -11,8 +11,8 @@ internal static class Startup
         services.TryAddSingleton(AppMockFactory.CreateCurrentUserServiceMock());
         services.TryAddSingleton(await ApplicationDbContextFactory.CreateAsync().ConfigureAwait(false));
 
-        services.TryAddScoped<IToDoItemRepository, ToDoItemRepository>();
-        services.TryAddScoped<IToDoListRepository, ToDoListRepository>();
+        //services.TryAddScoped<IToDoItemRepository, ToDoItemRepository>();
+        //services.TryAddScoped<IToDoListRepository, ToDoListRepository>();
     }
 
 }

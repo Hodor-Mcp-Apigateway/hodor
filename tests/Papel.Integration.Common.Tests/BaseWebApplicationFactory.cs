@@ -41,7 +41,7 @@ public class BaseWebApplicationFactory<TStartup> : WebApplicationFactory<TStartu
             await context.AppDbContext.Database.EnsureDeletedAsync().ConfigureAwait(false);
 
             await context.MigrateAsync().ConfigureAwait(false);
-            await context.SeedAsync().ConfigureAwait(false);
+            //await context.SeedAsync().ConfigureAwait(false);
         }
     }
 

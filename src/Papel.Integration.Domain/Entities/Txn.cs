@@ -2,6 +2,7 @@ namespace Papel.Integration.Domain.AggregatesModel.ToDoAggregates.Entities;
 
 using System.ComponentModel.DataAnnotations.Schema;
 using Common;
+using Events;
 using Integration.Events.Transaction;
 
 [Table("Txn", Schema = "txn")]
@@ -72,7 +73,7 @@ public class Txn : WalletBaseTenantEntity
         ResultCode = 0;
         ResultDescription = "Transaction completed successfully";
         ModifDate = DateTime.Now;
-        AddDomainEvent(new TransactionCompletedEvent(
+        AddDomainEvent(new TransactionCompltedDomainEvent(
             TxnId, SourceAccountId, DestinationAccountId, Amount ?? 0, OrderId));
     }
 

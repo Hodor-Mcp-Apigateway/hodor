@@ -2,16 +2,19 @@ namespace Papel.Integration.Application.Wallet.EventHandlers;
 
 using Events.Transaction;
 
-public sealed class TransactionCompletedEventHandler : INotificationHandler<TransactionCompletedEvent>
+public sealed class TransactionCompletedEventHandler : INotificationHandler<TransactionCompletedIntegrationEvent>
 {
     private readonly ILogger<TransactionCompletedEventHandler> _logger;
-
-    public TransactionCompletedEventHandler(ILogger<TransactionCompletedEventHandler> logger)
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IMapper _mapper;
+    public TransactionCompletedEventHandler(ILogger<TransactionCompletedEventHandler> logger, IPublishEndpoint publishEndpoint, IMapper mapper)
     {
-        _logger = logger;
+        _mapper = mapper.ThrowIfNull();
+        _logger = logger.ThrowIfNull();
+        _publishEndpoint = publishEndpoint.ThrowIfNull();
     }
 
-    public Task Handle(TransactionCompletedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(TransactionCompletedIntegrationEvent notification, CancellationToken cancellationToken)
     {
         _logger.LogInformation(
             "Transaction completed successfully: TxnId={TransactionId}, " +
@@ -20,12 +23,13 @@ public sealed class TransactionCompletedEventHandler : INotificationHandler<Tran
             notification.TransactionId, notification.SourceAccountId,
             notification.DestinationAccountId, notification.Amount, notification.OrderId);
 
-        // Transaction completion sonrası işlemler:
-        // - SMS/Email notification
-        // - Push notification
-        // - Analytics event
-        // - Cache invalidation
+        var createEvent = await notification
+                      .BuildAdapter(_mapper.Config)
+                      .AdaptToTypeAsync<TransactionCompletedIntegrationEvent>()
+                      .ConfigureAwait(false);
 
-        return Task.CompletedTask;
+        await _publishEndpoint.Publish(createEvent, cancellationToken)
+            .ConfigureAwait(false);
+
     }
 }

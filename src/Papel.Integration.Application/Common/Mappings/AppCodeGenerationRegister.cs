@@ -5,13 +5,19 @@ public class AppCodeGenerationRegister : ICodeGenerationRegister
 {
     public void Register(CodeGenerationConfig config)
     {
-        config.AdaptTo("[name]Dto").ForType<ToDoItem>()
+        config.AdaptTo("[name]Dto").ForType<Txn>()
             .IgnoreAttributes(typeof(NotMappedAttribute));
-        config.AdaptTo("[name]Dto").ForType<ToDoList>()
+        config.AdaptTo("[name]Dto").ForType<Account>()
+            .IgnoreAttributes(typeof(NotMappedAttribute));
+        config.AdaptTo("[name]Dto").ForType<LoadMoneyRequest>()
+            .IgnoreAttributes(typeof(NotMappedAttribute));
+        config.AdaptTo("[name]Dto").ForType<Customer>()
             .IgnoreAttributes(typeof(NotMappedAttribute));
 
         config.GenerateMapper("[name]Mapper")
-            .ForType<ToDoItem>()
-            .ForType<ToDoList>();
+            .ForType<Txn>()
+            .ForType<LoadMoneyRequest>()
+            .ForType<Customer>()
+            .ForType<Account>();
     }
 }

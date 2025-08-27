@@ -24,8 +24,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         _mediator = mediator.ThrowIfNull();
     }
 
-    public DbSet<ToDoItem> ToDoItems => Set<ToDoItem>();
-    public DbSet<ToDoList> ToDoLists => Set<ToDoList>();
     public DbSet<Txn> Txns => Set<Txn>();
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Customer> Customers => Set<Customer>();
@@ -50,7 +48,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public async Task MigrateAsync() => await AppDbContext.Database.MigrateAsync().ConfigureAwait(false);
 
-    public async Task SeedAsync() => await  _dbInitializer.SeedAsync(this).ConfigureAwait(false);
+    //public async Task SeedAsync() => await  _dbInitializer.SeedAsync(this).ConfigureAwait(false);
 
     private async Task DispatchDomainEventsAsync()
     {

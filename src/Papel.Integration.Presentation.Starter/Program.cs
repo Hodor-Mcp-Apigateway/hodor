@@ -1,3 +1,5 @@
+using Papel.Integration.Infrastructure.Core.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var envFileName = $".env.{builder.Environment.EnvironmentName}";
@@ -22,7 +24,7 @@ var configuration = builder.Configuration;
 var environment = builder.Environment;
 
 builder.Services
-    .AddLogging(configuration)
+    .AddSerilog(configuration)
     .AddOptions()
     .AddNgpSqlPersistence(configuration, (provider, optionsBuilder)
         => optionsBuilder.AddInterceptors(provider.GetRequiredService<SecondLevelCacheInterceptor>()))
@@ -52,14 +54,9 @@ builder.Services.AddOpenTelemetry()
     );
 
 var app = builder.Build();
-
-var scope = app.Services.CreateAsyncScope();
-
 app.UseRestPresentation(configuration, environment)
     .UseRouting();
-
 app.UseAuthorization();
-
 app.MapRestEndpoints();
 app.MapGrpcEndpoints();
 app.MapGraphQLEndpoints();

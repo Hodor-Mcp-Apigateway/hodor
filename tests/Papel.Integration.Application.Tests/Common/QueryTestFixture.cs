@@ -1,6 +1,5 @@
 namespace Papel.Integration.Application.Tests.Common;
 using Papel.Integration.Application.Common.Interfaces;
-using SeedData;
 
 public sealed class QueryTestFixture : IDisposable
 {
@@ -10,7 +9,7 @@ public sealed class QueryTestFixture : IDisposable
 
     public ICurrentUserService CurrentUserService { get; }
 
-    public SeedDataContext SeedDataContext { get; set; } = new SeedDataContext();
+    //public SeedDataContext SeedDataContext { get; set; } = new SeedDataContext();
 
     public QueryTestFixture(IApplicationDbContext context, ICurrentUserService currentUserService, IMediator mediator)
     {

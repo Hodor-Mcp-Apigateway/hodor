@@ -1,14 +1,11 @@
 ﻿namespace Papel.Integration.Application.Mapper;
 
-using Models;
+using Events.Transaction;
 
 public class MappingConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<ToDoItem, ToDoItemDto>();
-        config.NewConfig<ToDoList, ToDoListDto>();
-
-        config.NewConfig<ToDoItemCreatedDomainEvent, ToDoItemCreatedIntegrationEvent>();
+        config.NewConfig<TransactionCompltedDomainEvent, TransactionCompletedIntegrationEvent>();
     }
 }

@@ -1,6 +1,5 @@
 ﻿namespace Papel.Integration.Presentation.Grpc.Mapper;
 
-using Models;
 using Models.Result;
 using Models.ToDoItem;
 using ToDoItemDto = Application.Models.ToDoItemDto;
@@ -9,8 +8,6 @@ public class MappingConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<GetTodoItemQuery, GetTodoItemRequest>();
-
         config.NewConfig<Result<CollectionViewModel<ToDoItemDto>>, ToDoItemsResponse>()
             .Map(dest => dest.IsSuccess, src => src.IsSuccess)
             .Map(dest => dest.Errors, src => src.Errors)

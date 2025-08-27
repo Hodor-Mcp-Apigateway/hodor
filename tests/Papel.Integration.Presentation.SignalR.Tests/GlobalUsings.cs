@@ -5,5 +5,3 @@ global using Papel.Integration.Common.Tests;
 global using Microsoft.AspNetCore.SignalR.Client;
 global using Papel.Integration.Application.Models;
 global using Papel.Integration.Presentation.SignalR.Hubs;
-global using Papel.Integration.Application.Common.Interfaces;
-global using Papel.Integration.Domain.AggregatesModel.ToDoAggregates.Entities;

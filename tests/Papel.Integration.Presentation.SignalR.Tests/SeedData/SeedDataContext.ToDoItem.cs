@@ -1,4 +1,5 @@
 namespace Papel.Integration.Presentation.SignalR.Tests.SeedData;
+/*
 internal sealed partial class SeedDataContext
 {
     public static IEnumerable<ToDoItem> ToDoItems
@@ -13,3 +14,4 @@ internal sealed partial class SeedDataContext
         }
     }
 }
+*/

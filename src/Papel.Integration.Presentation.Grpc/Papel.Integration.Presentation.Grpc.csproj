@@ -12,6 +12,8 @@
 
     <ItemGroup>
       <PackageReference Include="Google.Protobuf" />
+      <PackageReference Include="Grpc.Core" />
+      <PackageReference Include="Grpc.Core.Api" />
       <PackageReference Include="OpenTelemetry" />
       <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" />
       <PackageReference Include="protobuf-net" />
@@ -19,7 +21,6 @@
       <PackageReference Include="protobuf-net.Grpc.AspNetCore.Reflection" />
       <PackageReference Include="protobuf-net.Reflection" />
       <PackageReference Include="System.ServiceModel.Primitives" />
-      <PackageReference Include="NKZSoft.Service.Configuration.Grpc" />
     </ItemGroup>
 
     <ItemGroup>

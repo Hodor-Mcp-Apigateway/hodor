@@ -1,6 +1,6 @@
 namespace Papel.Integration.Events.Transaction;
 
-public sealed record TransactionCompletedEvent(
+public sealed record TransactionCompletedIntegrationEvent(
     long TransactionId,
     long SourceAccountId,
     long DestinationAccountId,
