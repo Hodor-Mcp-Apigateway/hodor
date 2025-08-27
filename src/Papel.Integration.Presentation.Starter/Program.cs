@@ -2,6 +2,16 @@ using Papel.Integration.Common.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var envFileName = $".env.{builder.Environment.EnvironmentName}";
+if (File.Exists(envFileName))
+{
+    DotNetEnv.Env.Load(envFileName);
+}
+else
+{
+    DotNetEnv.Env.Load();
+}
+
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
