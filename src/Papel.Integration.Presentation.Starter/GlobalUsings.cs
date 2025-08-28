@@ -1,11 +1,6 @@
-global using System;
 global using System.Reflection;
 global using EFCoreSecondLevelCacheInterceptor;
 global using HealthChecks.UI.Client;
-global using Microsoft.Extensions.Configuration;
-global using Microsoft.Extensions.DependencyInjection;
-global using Microsoft.Extensions.Logging;
-global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 global using Papel.Integration.Application;
 global using Papel.Integration.EFCore.Caching.Redis.Extensions;

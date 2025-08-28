@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "PTech",
+  "classifications": [ "C#", "Linux", "MacOS", "Windows", "Cloud", "Service", "Web" ],
+  "name": "PTech Backend Microservice",
+  "defaultName": "PapelTemplate",
+  "description": "A project template for creating an ASP.NET Core microservice.",
+  "identity": "Papel.Integration",
+  "groupIdentity": "Papel.Integration",
+  "shortName": "papel-template",
+  "tags": {
+    "language": "C#",
+    "type":"project"
+  },
+  "sourceName": "Papel.Integration",
+  "preferNameDirectory": true,
+  "symbols": {
+    "EnableGraphQL": {
+      "type": "parameter",
+      "dataType":"bool",
+      "defaultValue": "true",
+      "displayName": "Enable GraphQL API"
+    },
+    "EnableGrpc": {
+      "type": "parameter",
+      "dataType":"bool",
+      "defaultValue": "true",
+      "displayName": "Enable Grpc API"
+    },
+    "EnableSignalR": {
+      "type": "parameter",
+      "dataType":"bool",
+      "defaultValue": "true",
+      "displayName": "Enable Websocket API"
+    },
+    "EnableRedisStorage": {
+      "type": "parameter",
+      "dataType":"bool",
+      "defaultValue": "false",
+      "displayName": "Enable Redis Storage"
+    }
+  },
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "exclude": [
+        ".template.config/**",
+        ".vs/**",
+        ".git/**",
+        ".idea/**"
+      ],
+      "modifiers": [
+        {
+          "condition": "(!EnableGraphQL)",
+          "exclude": [
+            "src/NKZSoft.Template.Presentation.GraphQL/**",
+	    "tests/NKZSoft.Template.Presentation.GraphQL.Tests/**"
+          ]
+        },
+        {
+          "condition": "(!EnableGrpc)",
+          "exclude": [
+            "src/NKZSoft.Template.Presentation.Grpc/**",
+	    "tests/NKZSoft.Template.Presentation.Grpc.Tests/**"
+          ]
+        },
+        {
+          "condition": "(!EnableSignalR)",
+          "exclude": [
+            "src/NKZSoft.Template.Presentation.SignalR/**",
+	    "tests/NKZSoft.Template.Presentation.SignalR.Tests/**"
+          ]
+        }
+      ]
+    }
+  ],
+  "SpecialCustomOperations": {
+    "**/*.cs": {
+      "operations": [
+        {
+          "type": "conditional",
+          "configuration": {
+            "if": ["//#if"],
+            "else": ["//#else"],
+            "elseif": ["//#elseif", "//#elif"],
+            "endif": ["//#endif"],
+            "trim" : "true",
+            "wholeLine": "true"
+          }
+        }
+      ]
+    },
+   "**/*.csproj": {
+      "operations": [
+        {
+          "type": "conditional",
+          "configuration": {
+            "if": ["<!--#if"],
+            "else": ["<!--#else"],
+            "elseif": ["<!--#elseif", "<!--#elif"],
+            "endif": ["<!--#endif"],
+            "trim" : "true",
+            "wholeLine": "true"
+          }
+        }
+      ]
+    },
+   "**/*.snl": {
+      "operations": [
+        {
+          "type": "conditional",
+          "configuration": {
+            "if": ["#if"],
+            "else": ["#else"],
+            "elseif": ["#elseif", "#elif"],
+            "endif": ["#endif"],
+            "trim" : "true",
+            "wholeLine": "true"
+          }
+        }
+      ]
+    }
+  }
+}

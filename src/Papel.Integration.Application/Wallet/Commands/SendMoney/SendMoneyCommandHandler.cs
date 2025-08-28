@@ -52,8 +52,8 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
 
             var txn = new Txn
             {
-                TxnStatusId = 1, // Completed
-                TxnTypeId = 2, // Money Transfer
+                TxnStatusId = 1,
+                TxnTypeId = 2,
                 SourceAccountId = request.SourceAccountId,
                 DestinationAccountId = request.DestinationAccountId,
                 Amount = request.Amount,

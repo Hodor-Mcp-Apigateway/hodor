@@ -1,3 +1,5 @@
+#pragma warning disable CA1506
+
 using Papel.Integration.Infrastructure.Core.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,7 +52,7 @@ builder.Services.AddOpenTelemetry()
         .AddNgpSqlPersistenceOpenTelemetry()
         .AddMassTransitOpenTelemetry()
         .AddOtlpExporter()
-        .AddConsoleExporter()
+        //.AddConsoleExporter()
     );
 
 var app = builder.Build();
