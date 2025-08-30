@@ -24,7 +24,6 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.8" />
-    <PackageVersion Include="NKZSoft.FluentValidation.Options" Version="1.2.2" />
     <PackageVersion Include="Npgsql.OpenTelemetry" Version="9.0.3" />
     <PackageVersion Include="OpenTelemetry" Version="1.11.2" />
     <PackageVersion Include="OpenTelemetry.Api" Version="1.11.2" />

@@ -7,7 +7,6 @@ global using StackExchange.Redis;
 global using Microsoft.Extensions.Options;
 global using EasyCaching.Core.Serialization;
 global using System.Diagnostics.CodeAnalysis;
-global using NKZSoft.FluentValidation.Options;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Papel.Integration.Application.Common.Repositories.Redis;

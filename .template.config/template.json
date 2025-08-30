@@ -54,22 +54,22 @@
         {
           "condition": "(!EnableGraphQL)",
           "exclude": [
-            "src/NKZSoft.Template.Presentation.GraphQL/**",
-	    "tests/NKZSoft.Template.Presentation.GraphQL.Tests/**"
+            "src/Papel.Integration.Presentation.GraphQL/**",
+	    "tests/Papel.Integration.Presentation.GraphQL.Tests/**"
           ]
         },
         {
           "condition": "(!EnableGrpc)",
           "exclude": [
-            "src/NKZSoft.Template.Presentation.Grpc/**",
-	    "tests/NKZSoft.Template.Presentation.Grpc.Tests/**"
+            "src/Papel.Integration.Presentation.Grpc/**",
+	    "tests/Papel.Integration.Presentation.Grpc.Tests/**"
           ]
         },
         {
           "condition": "(!EnableSignalR)",
           "exclude": [
-            "src/NKZSoft.Template.Presentation.SignalR/**",
-	    "tests/NKZSoft.Template.Presentation.SignalR.Tests/**"
+            "src/Papel.Integration.Presentation.SignalR/**",
+	    "tests/Papel.Integration.Presentation.SignalR.Tests/**"
           ]
         }
       ]
