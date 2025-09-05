@@ -42,7 +42,7 @@ public class Customer : WalletBaseTenantEntity
     public bool SeenFailLoginAttempts { get; set; }
     public bool IsPendingApproval { get; set; }
     public short WrongAnswerCount { get; set; }
-    public string Nationality { get; set; } = string.Empty;
+    public string? Nationality { get; set; } = string.Empty;
     public string? BucketName { get; set; }
     public string? ImageKey { get; set; }
     public bool IsKpsVerified { get; set; }
@@ -68,7 +68,7 @@ public class Customer : WalletBaseTenantEntity
         LastName = lastName;
         Email = email;
         ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId;
-        ModifDate = DateTime.Now;
+        ModifDate = DateTime.UtcNow;
 
         AddDomainEvent(new CustomerUpdatedEvent(CustomerId, firstName, lastName, email));
     }
@@ -76,9 +76,9 @@ public class Customer : WalletBaseTenantEntity
     public void VerifyEmail()
     {
         IsEmailAddressVerified = true;
-        EmailAddressVerificationDate = DateTime.Now;
+        EmailAddressVerificationDate = DateTime.UtcNow;
         ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId;
-        ModifDate = DateTime.Now;
+        ModifDate = DateTime.UtcNow;
 
         AddDomainEvent(new CustomerEmailVerifiedEvent(CustomerId, Email));
     }

@@ -28,6 +28,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<LoadMoneyRequest> LoadMoneyRequests => Set<LoadMoneyRequest>();
+    public DbSet<ExternalReference> ExternalReferences => Set<ExternalReference>();
+    public DbSet<OperationLock> OperationLocks => Set<OperationLock>();
 
     public DbContext AppDbContext => this;
     public new DatabaseFacade Database => base.Database;

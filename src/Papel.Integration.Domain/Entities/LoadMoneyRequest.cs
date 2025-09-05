@@ -59,7 +59,7 @@ public class LoadMoneyRequest : WalletBaseTenantEntity
         NewBalance = newBalance;
         ResultCode = 0;
         ResultDescription = "Success";
-        ModifDate = DateTime.Now;
+        ModifDate = DateTime.UtcNow;
         AddDomainEvent(new LoadMoneyCompletedEvent(
             LoadMoneyRequestId, SourceAccountId, DestinationAccountId, Amount, OrderId));
     }
@@ -68,7 +68,7 @@ public class LoadMoneyRequest : WalletBaseTenantEntity
     {
         ResultCode = errorCode;
         ResultDescription = errorMessage;
-        ModifDate = DateTime.Now;
+        ModifDate = DateTime.UtcNow;
         AddDomainEvent(new LoadMoneyFailedEvent(
             LoadMoneyRequestId, SourceAccountId, Amount, errorMessage, OrderId));
     }

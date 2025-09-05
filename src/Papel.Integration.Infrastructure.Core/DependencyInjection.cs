@@ -1,6 +1,7 @@
 ﻿namespace Papel.Integration.Infrastructure.Core;
 
 using Services;
+using Application.Common.Interfaces;
 
 public static class DependencyInjection
 {
@@ -9,6 +10,7 @@ public static class DependencyInjection
         services.AddSingleton<IDateTime, MachineDateTime>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<ILockService, LockService>();
 
         return services;
     }

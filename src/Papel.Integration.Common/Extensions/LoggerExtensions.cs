@@ -22,4 +22,16 @@ public static partial class LoggerExtensions
 
     [LoggerMessage(7, LogLevel.Error, "Application: An unhandled exception has occurred.")]
     public static partial void ApplicationUnhandledException(this ILogger logger, Exception ex);
+
+    public static void LogStructured(this ILogger logger, LogLevel logLevel, string logPrefix, string referenceId, string system, string entity, string message)
+    {
+        logger.Log(logLevel, "LogPrefix: {LogPrefix} | ReferenceId: {ReferenceId} | System: {System} | Entity: {Entity} | Message: {Message}", 
+            logPrefix, referenceId, system, entity, message);
+    }
+
+    public static void LogStructured(this ILogger logger, LogLevel logLevel, Model.StructuredLog structuredLog)
+    {
+        logger.Log(logLevel, "LogPrefix: {LogPrefix} | ReferenceId: {ReferenceId} | System: {System} | Entity: {Entity} | Message: {Message}", 
+            structuredLog.LogPrefix, structuredLog.ReferenceId, structuredLog.System, structuredLog.Entity, structuredLog.Message);
+    }
 }

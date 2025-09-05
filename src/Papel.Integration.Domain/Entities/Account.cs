@@ -40,7 +40,7 @@ public class Account : WalletBaseTenantEntity
     {
         Balance = newBalance;
         ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId;
-        ModifDate = DateTime.Now;
+        ModifDate = DateTime.UtcNow;
 
         AddDomainEvent(new AccountBalanceUpdatedEvent(
             AccountId, CustomerId, oldBalance, newBalance, transactionType));
@@ -60,8 +60,26 @@ public class Account : WalletBaseTenantEntity
     {
         IsDefault = true;
         ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId;
-        ModifDate = DateTime.Now;
+        ModifDate = DateTime.UtcNow;
 
         AddDomainEvent(new AccountSetAsDefaultEvent(AccountId, CustomerId));
+    }
+
+    public void UpdateAvailableCashBalance(decimal amount)
+    {
+        var currentAvailableCashBalance = AvailableCashBalance ?? 0;
+        
+        if (currentAvailableCashBalance >= amount)
+        {
+            AvailableCashBalance = currentAvailableCashBalance - amount;
+        }
+        else if (currentAvailableCashBalance > 0)
+        {
+            // Use all available cash balance and the rest will come from regular balance
+            AvailableCashBalance = 0;
+        }
+        
+        ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId;
+        ModifDate = DateTime.UtcNow;
     }
 }
