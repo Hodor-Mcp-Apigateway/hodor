@@ -29,7 +29,8 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
         // External işlem için özel kontroller
-        Customer? customer = null;
+        Customer? destinationCustomer = null;
+        Account? sourceAccount = null;
         long? customerId = null;
 
         try
@@ -46,7 +47,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                     _logger.LogStructured(LogLevel.Warning, "Integration:External:Order", request.ReferenceId!,
                         "PaymentProcessService", "Order", "Bu kayıt daha önce işlenmiştir");
 
-                    return Result.Fail<SendMoneyResponse>("Bu kayıt daha önce işlenmiştir");
+                    return Result.Fail<SendMoneyResponse>(new ConflictError("Bu kayıt daha önce işlenmiştir"));
                 }
 
                 // 2. Find customer by TCKN with active wallet
@@ -55,22 +56,22 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                     _logger.LogStructured(LogLevel.Warning, "Integration:External:Order", request.ReferenceId!,
                         "PaymentProcessService", "Order", "Geçersiz TCKN formatı");
 
-                    return Result.Fail<SendMoneyResponse>("Geçersiz TCKN formatı");
+                    return Result.Fail<SendMoneyResponse>(new ValidationError("Geçersiz TCKN formatı"));
                 }
 
-                customer = await _context.Customers
+                destinationCustomer = await _context.Customers
                     .Include(customer => customer.Accounts.Where(account => account.StatusId == Status.Valid))
                     .FirstOrDefaultAsync(customer => customer.Tckn == tcknLong, cancellationToken);
 
-                if (customer == null || !customer.Accounts.Any())
+                if (destinationCustomer == null || !destinationCustomer.Accounts.Any())
                 {
                     _logger.LogStructured(LogLevel.Warning, "Integration:External:Order", request.ReferenceId!,
                         "PaymentProcessService", "Order", "Müşteri bulunamadı veya aktif cüzdanı yok");
 
-                    return Result.Fail<SendMoneyResponse>("Müşteri bulunamadı veya aktif cüzdanı yok");
+                    return Result.Fail<SendMoneyResponse>(new NotFoundError("Müşteri bulunamadı veya aktif cüzdanı yok"));
                 }
 
-                customerId = customer.CustomerId;
+                customerId = destinationCustomer.CustomerId;
 
                 // Create operation lock for external transactions
                 await _lockService.CreateOperationLockAsync(customerId.Value, "ExternalSendMoney", cancellationToken);
@@ -86,29 +87,27 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
 
                 _context.ExternalReferences.Add(externalReference);
             }
-            var sourceAccount = await _context.Accounts
-                .Where(account => account.AccountId == request.SourceAccountId)
-                .FirstOrDefaultAsync(cancellationToken);
+
+            sourceAccount = await _context.Accounts
+                                .Where(account => account.CustomerId == request.SourceCustomerId)
+                                .FirstOrDefaultAsync(cancellationToken);
 
             if (sourceAccount == null)
-                return Result.Fail<SendMoneyResponse>("Source account not found");
+                return Result.Fail<SendMoneyResponse>(new NotFoundError("Source account not found"));
 
             // Create account balance lock
             await _lockService.CreateAccountBalanceOperationLockAsync(sourceAccount.AccountId, cancellationToken);
 
             // For external requests, destinationAccount is already found above
             // For internal requests, get it by DestinationAccountId
-            var destinationAccount = request.IsExternal
-                ? customer!.Accounts.FirstOrDefault(account => account.IsDefault) ?? customer!.Accounts.First()
-                : await _context.Accounts
-                    .Where(account => account.AccountId == request.DestinationAccountId)
-                    .FirstOrDefaultAsync(cancellationToken);
+            var destinationAccount = destinationCustomer!.Accounts.FirstOrDefault(
+                                             account => account.IsDefault);
 
             if (destinationAccount == null)
-                return Result.Fail<SendMoneyResponse>("Destination account not found");
+                return Result.Fail<SendMoneyResponse>(new NotFoundError("Destination account not found"));
 
             if (sourceAccount.Balance < request.Amount)
-                return Result.Fail<SendMoneyResponse>("Insufficient balance");
+                return Result.Fail<SendMoneyResponse>(new InsufficientFundsError("Insufficient balance"));
 
             var oldSourceBalance = sourceAccount.Balance;
             var oldDestinationBalance = destinationAccount.Balance;
@@ -123,7 +122,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
             {
                 TxnStatusId = 1,
                 TxnTypeId = request.IsExternal ? (short)3 : (short)2, // External transfer type = 3, Internal = 2
-                SourceAccountId = request.SourceAccountId,
+                SourceAccountId = sourceAccount.AccountId,
                 DestinationAccountId = destinationAccount.AccountId,
                 Amount = request.Amount,
                 CurrentBalance = oldSourceBalance,
@@ -131,7 +130,6 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 Description = request.IsExternal ? $"External transfer - ReferenceId: {request.ReferenceId}" : request.Description ?? "",
                 OrderId = orderId,
                 FirmReferenceNumber = firmReferenceNumber,
-                RemoteIpAddress = request.RemoteIpAddress ?? "",
                 TenantId = request.TenantId,
                 CreaDate = DateTime.UtcNow,
                 ModifDate = DateTime.UtcNow
@@ -145,7 +143,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
             {
                 var loadMoneyRequest = new LoadMoneyRequest
                 {
-                    SourceAccountId = request.SourceAccountId,
+                    SourceAccountId = sourceAccount.AccountId,
                     DestinationAccountId = destinationAccount.AccountId,
                     Amount = request.Amount,
                     CurrentBalance = oldSourceBalance,
@@ -155,7 +153,6 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                     Description = request.Description ?? "",
                     OrderId = orderId,
                     TxnTypeId = 2,
-                    RemoteIpAddress = request.RemoteIpAddress ?? "",
                     TenantId = request.TenantId,
                     CreaDate = DateTime.UtcNow,
                     ModifDate = DateTime.UtcNow
@@ -211,9 +208,6 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 await _lockService.RemoveOperationLockAsync(customerId.Value, "ExternalSendMoney", cancellationToken);
             }
 
-            var sourceAccount = await _context.Accounts
-                .Where(account => account.AccountId == request.SourceAccountId)
-                .FirstOrDefaultAsync(cancellationToken);
             if (sourceAccount != null)
             {
                 await _lockService.RemoveAccountBalanceOperationLockAsync(sourceAccount.AccountId, cancellationToken);
@@ -240,9 +234,6 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 await _lockService.RemoveOperationLockAsync(customerId.Value, "ExternalSendMoney", cancellationToken);
             }
 
-            var sourceAccount = await _context.Accounts
-                .Where(account => account.AccountId == request.SourceAccountId)
-                .FirstOrDefaultAsync(cancellationToken);
             if (sourceAccount != null)
             {
                 await _lockService.RemoveAccountBalanceOperationLockAsync(sourceAccount.AccountId, cancellationToken);

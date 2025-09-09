@@ -8,8 +8,8 @@ public sealed class Mutation
     [UseMutationConvention]
 #pragma warning disable CA1822, MA0038
     public async Task<SendMoneyResponse> SendMoneyAsync([Service] IMediator mediator,
-    long SourceAccountId ,
-    long DestinationAccountId,
+    long SourceCustomerId,
+    string? Tckn ,
     decimal Amount,
     short CurrencyId ,
     short TenantId ,
@@ -18,8 +18,8 @@ public sealed class Mutation
         CancellationToken token) =>
         (await mediator.Send(new SendMoneyCommand()
                              {
-                                 SourceAccountId = SourceAccountId,
-                                 DestinationAccountId = DestinationAccountId,
+                                 SourceCustomerId = SourceCustomerId,
+                                 Tckn =Tckn,
                                  Amount =Amount,
                                  CurrencyId = CurrencyId,
                                  TenantId = TenantId

@@ -23,7 +23,7 @@ public class Customer : WalletBaseTenantEntity
     public short CustomerStatusId { get; set; }
 
     [Column("Password")]
-    public string PasswordHash { get; set; } = string.Empty;
+    public string? PasswordHash { get; set; } = string.Empty;
     public bool IsSessionCheckNecessary { get; set; }
     public short WrongPasswordCount { get; set; }
     public DateTime? WrongPasswordLastDate { get; set; }

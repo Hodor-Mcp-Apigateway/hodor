@@ -4,9 +4,9 @@ public sealed class SendMoneyCommandValidator : AbstractValidator<SendMoneyComma
 {
     public SendMoneyCommandValidator()
     {
-        RuleFor(command => command.SourceAccountId)
+        RuleFor(command => command.SourceCustomerId)
             .GreaterThan(0)
-            .WithMessage("SourceAccountId 0'dan büyük olmalıdır");
+            .WithMessage("SourceCustomerId 0'dan büyük olmalıdır");
 
         RuleFor(command => command.Amount)
             .GreaterThan(0)
@@ -38,14 +38,6 @@ public sealed class SendMoneyCommandValidator : AbstractValidator<SendMoneyComma
                 .WithMessage("TCKN 11 karakter olmalıdır")
                 .Matches(@"^\d{11}$")
                 .WithMessage("TCKN sadece rakam içermelidir");
-        });
-
-        // Internal işlemler için DestinationAccountId kontrolü
-        When(command => !command.IsExternal, () =>
-        {
-            RuleFor(command => command.DestinationAccountId)
-                .GreaterThan(0)
-                .WithMessage("Internal işlemler için DestinationAccountId geçerli olmalıdır");
         });
     }
 }

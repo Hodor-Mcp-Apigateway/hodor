@@ -26,14 +26,14 @@ public record ResultDtoBase(bool IsSuccess, IEnumerable<ErrorDto> Errors)
 public sealed record ResultDtoBase<T> : ResultDtoBase
 {
     [JsonConstructor]
-    public ResultDtoBase(T Data, bool IsSuccess, IEnumerable<ErrorDto> Errors) : base(IsSuccess, Errors)
+    public ResultDtoBase(T? Data, bool IsSuccess, IEnumerable<ErrorDto> Errors) : base(IsSuccess, Errors)
     {
         this.Data = Data;
     }
 
-    public T Data { get; init; }
+    public T? Data { get; init; }
 
-    public void Deconstruct(out T Data, out bool IsSuccess, out IEnumerable<ErrorDto> Errors)
+    public void Deconstruct(out T? Data, out bool IsSuccess, out IEnumerable<ErrorDto> Errors)
     {
         Data = this.Data;
         IsSuccess = this.IsSuccess;
