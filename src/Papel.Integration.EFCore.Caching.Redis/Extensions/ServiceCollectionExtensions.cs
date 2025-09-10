@@ -42,7 +42,17 @@ public static class ServiceCollectionExtensions
         services.AddEasyCaching(option =>
         {
             // Configuration'ı direkt IConfiguration'dan al
-            var redisConfig = configuration.GetSection(CacheConfigurationSection.SectionName).Get<RedisConnection>();
+            var section = configuration.GetSection(CacheConfigurationSection.SectionName);
+            var connectionString = section["ConnectionString"] ?? 
+                                 Environment.GetEnvironmentVariable("CONNECTIONSTRINGS__REDISCACHECONNECTION__CONNECTIONSTRING");
+            var healthCheckEnabled = section.GetValue<bool>("HealthCheckEnabled") || 
+                                   Environment.GetEnvironmentVariable("CONNECTIONSTRINGS__REDISCACHECONNECTION__HEALTHCHECKENABLED")?.ToLowerInvariant() == "true";
+            
+            var redisConfig = new RedisConnection
+            {
+                ConnectionString = connectionString,
+                HealthCheckEnabled = healthCheckEnabled
+            };
 
             if (string.IsNullOrEmpty(redisConfig?.ConnectionString))
             {

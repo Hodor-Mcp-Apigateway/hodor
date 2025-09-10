@@ -15,9 +15,6 @@ else
 }
 
 builder.Configuration
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-    .AddJsonFile("appsettings.secrets.json", optional: true, reloadOnChange: true)
     .AddCommandLine(args)
     .AddEnvironmentVariables()
     .Build();
