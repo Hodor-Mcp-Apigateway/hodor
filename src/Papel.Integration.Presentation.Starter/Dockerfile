@@ -39,9 +39,6 @@ RUN dotnet restore "src/Papel.Integration.Presentation.Starter/Papel.Integration
 # Copy all source code
 COPY . .
 
-# Copy environment file to the starter project directory
-COPY ["src/Papel.Integration.Presentation.Starter/.env", "src/Papel.Integration.Presentation.Starter/"]
-
 # Build the application
 WORKDIR "/src/src/Papel.Integration.Presentation.Starter"
 RUN dotnet build "Papel.Integration.Presentation.Starter.csproj" -c $BUILD_CONFIGURATION -o /app/build \
@@ -62,7 +59,6 @@ RUN dotnet publish "Papel.Integration.Presentation.Starter.csproj" -c $BUILD_CON
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY ["src/Papel.Integration.Presentation.Starter/.env", "./"]
 
 # Create non-root user for security
 RUN adduser --disabled-password --gecos "" appuser && chown -R appuser /app
