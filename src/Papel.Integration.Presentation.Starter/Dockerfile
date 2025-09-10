@@ -1,8 +1,8 @@
 # Use the official ASP.NET Core runtime as base image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 80
+EXPOSE 81
 
 # Use the official .NET SDK for building
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
