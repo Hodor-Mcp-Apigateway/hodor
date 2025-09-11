@@ -12,6 +12,6 @@ public sealed record SendMoneyCommand : IRequest<Result<SendMoneyResponse>>
     // External işlemler için
     public string? ReferenceId { get; init; }
     public string? Tckn { get; init; }
-    public bool IsExternal { get; init; }
+    public bool IsExternal { get; init; } = true;
     public long SourceCustomerId { get; init; }
 }
