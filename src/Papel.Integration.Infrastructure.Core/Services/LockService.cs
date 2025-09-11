@@ -22,7 +22,19 @@ public class LockService : ILockService
     {
         try
         {
+            // Check if lock already exists first
             var systemDate = long.Parse(DateTime.Now.ToString("yyyyMMdd"));
+            var existingLock = await _context.OperationLocks
+                .FirstOrDefaultAsync(lockEntity => lockEntity.CustomerId == customerId
+                    && lockEntity.MethodName == methodName
+                    && lockEntity.SystemDate == systemDate,
+                    cancellationToken);
+
+            if (existingLock != null)
+            {
+                throw new ConflictException("Bu işlem zaten başka bir kullanıcı tarafından gerçekleştiriliyor");
+            }
+
             var operationLock = new OperationLock
             {
                 CustomerId = customerId,
@@ -34,16 +46,13 @@ public class LockService : ILockService
             _context.OperationLocks.Add(operationLock);
             await _context.SaveChangesAsync(cancellationToken);
         }
-        catch (DbUpdateException exception) when (exception.InnerException?.Message?.Contains("23505", StringComparison.OrdinalIgnoreCase) == true || 
-                                                exception.InnerException?.Message?.Contains("unique", StringComparison.OrdinalIgnoreCase) == true ||
-                                                exception.InnerException?.Message?.Contains("duplicate", StringComparison.OrdinalIgnoreCase) == true)
+        catch (ConflictException)
         {
-            // Unique constraint violation - operation already in progress
-            throw new ConflictException("Bu işlem zaten başka bir kullanıcı tarafından gerçekleştiriliyor");
+            throw; // Re-throw ConflictException as is
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error creating operation lock for customer {CustomerId}, method {MethodName}", 
+            _logger.LogError(exception, "Error creating operation lock for customer {CustomerId}, method {MethodName}",
                 customerId, methodName);
             throw;
         }
@@ -58,9 +67,9 @@ public class LockService : ILockService
 
             var systemDate = long.Parse(DateTime.Now.ToString("yyyyMMdd"));
             var operationLock = await _context.OperationLocks
-                .FirstOrDefaultAsync(lockEntity => lockEntity.CustomerId == customerId 
-                    && lockEntity.MethodName == methodName 
-                    && lockEntity.SystemDate == systemDate, 
+                .FirstOrDefaultAsync(lockEntity => lockEntity.CustomerId == customerId
+                    && lockEntity.MethodName == methodName
+                    && lockEntity.SystemDate == systemDate,
                     cancellationToken);
 
             if (operationLock != null)
@@ -71,7 +80,7 @@ public class LockService : ILockService
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error removing operation lock for customer {CustomerId}, method {MethodName}", 
+            _logger.LogError(exception, "Error removing operation lock for customer {CustomerId}, method {MethodName}",
                 customerId, methodName);
             // Don't throw on cleanup operations
         }
