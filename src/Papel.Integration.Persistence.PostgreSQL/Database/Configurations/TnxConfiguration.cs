@@ -22,13 +22,13 @@ public class TxnConfiguration : IEntityTypeConfiguration<Txn>
 
         // Property configurations
         builder.Property(txn => txn.Amount)
-            .HasColumnType("numeric(17,2)");
+            .HasColumnType("numeric(17,4)");
 
         builder.Property(txn => txn.CurrentBalance)
-            .HasColumnType("numeric(17,2)");
+            .HasColumnType("numeric(17,4)");
 
         builder.Property(txn => txn.NewBalance)
-            .HasColumnType("numeric(17,2)");
+            .HasColumnType("numeric(17,4)");
 
         builder.Property(txn => txn.OrderId)
             .HasMaxLength(150);
