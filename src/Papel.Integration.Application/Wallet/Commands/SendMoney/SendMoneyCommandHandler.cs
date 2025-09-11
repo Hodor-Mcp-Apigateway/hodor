@@ -61,7 +61,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
 
                 destinationCustomer = await _context.Customers
                     .Include(customer => customer.Accounts.Where(account => account.StatusId == Status.Valid))
-                    .FirstOrDefaultAsync(customer => customer.Tckn == tcknLong, cancellationToken);
+                    .FirstOrDefaultAsync(customer => customer.Tckn == tcknLong && customer.TenantId == (short)Tenant.ConsumerWallet, cancellationToken);
 
                 if (destinationCustomer == null || !destinationCustomer.Accounts.Any())
                 {
