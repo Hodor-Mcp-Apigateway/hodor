@@ -159,6 +159,8 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
             loadMoneyRequest.CompleteLoadMoneyRequest(sourceAccount.Balance);
             _context.LoadMoneyRequests.Add(loadMoneyRequest);
 
+            await _context.SaveChangesAsync(cancellationToken);
+
             // Create AccountAction records for both source and destination accounts
             var sourceAccountAction = new AccountAction
             {
@@ -182,7 +184,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
             var destinationAccountAction = new AccountAction
             {
                 AccountId = destinationAccount.AccountId,
-                ReferenceId = txn.TxnId,
+                ReferenceId = loadMoneyRequest.LoadMoneyRequestId,
                 Amount = request.Amount,
                 BeforeAccountBalance = oldDestinationBalance,
                 AfterAccountBalance = destinationAccount.Balance,
