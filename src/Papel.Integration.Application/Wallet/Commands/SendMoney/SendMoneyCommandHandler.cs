@@ -3,6 +3,7 @@
 using Common.Interfaces;
 using Common.Models;
 using Domain.AggregatesModel.ToDoAggregates.Entities;
+using Domain.Entities;
 using Domain.Enums;
 using Papel.Integration.Common.Extensions;
 
@@ -28,7 +29,6 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
     {
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-        // External işlem için özel kontroller
         Customer? destinationCustomer = null;
         Account? sourceAccount = null;
         long? customerId = null;
@@ -121,7 +121,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
             var txn = new Txn
             {
                 TxnStatusId = 1,
-                TxnTypeId = request.IsExternal ? (short)3 : (short)2, // External transfer type = 3, Internal = 2
+                TxnTypeId = (short)TXN_TYPE.TransferByCorporate,
                 SourceAccountId = sourceAccount.AccountId,
                 DestinationAccountId = destinationAccount.AccountId,
                 Amount = request.Amount,
@@ -130,7 +130,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 Description = request.IsExternal ? $"External transfer - ReferenceId: {request.ReferenceId}" : request.Description ?? "",
                 OrderId = orderId,
                 FirmReferenceNumber = firmReferenceNumber,
-                TenantId = request.TenantId,
+                TenantId = sourceAccount.TenantId,
                 CreaDate = DateTime.UtcNow,
                 ModifDate = DateTime.UtcNow
             };
@@ -139,28 +139,67 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
             _context.Txns.Add(txn);
 
             // LoadMoneyRequest sadece internal işlemler için gerekli
-            if (!request.IsExternal)
+            var loadMoneyRequest = new LoadMoneyRequest
             {
-                var loadMoneyRequest = new LoadMoneyRequest
-                {
-                    SourceAccountId = sourceAccount.AccountId,
-                    DestinationAccountId = destinationAccount.AccountId,
-                    Amount = request.Amount,
-                    CurrentBalance = oldSourceBalance,
-                    NewBalance = sourceAccount.Balance,
-                    CurrencyId = request.CurrencyId,
-                    FirmReferenceNumber = firmReferenceNumber,
-                    Description = request.Description ?? "",
-                    OrderId = orderId,
-                    TxnTypeId = 2,
-                    TenantId = request.TenantId,
-                    CreaDate = DateTime.UtcNow,
-                    ModifDate = DateTime.UtcNow
-                };
+                SourceAccountId = sourceAccount.AccountId,
+               DestinationAccountId = destinationAccount.AccountId,
+               Amount = request.Amount,
+               CurrentBalance = oldSourceBalance,
+               NewBalance = sourceAccount.Balance,
+               CurrencyId = request.CurrencyId,
+               FirmReferenceNumber = firmReferenceNumber,
+               Description = request.Description ?? "",
+               OrderId = orderId,
+               TxnTypeId = (short)TXN_TYPE.TransferByCorporate,
+               TenantId = destinationAccount.TenantId,
+                CreaDate = DateTime.UtcNow,
+                ModifDate = DateTime.UtcNow,
+            };
 
-                loadMoneyRequest.CompleteLoadMoneyRequest(sourceAccount.Balance);
-                _context.LoadMoneyRequests.Add(loadMoneyRequest);
-            }
+            loadMoneyRequest.CompleteLoadMoneyRequest(sourceAccount.Balance);
+            _context.LoadMoneyRequests.Add(loadMoneyRequest);
+
+            // Create AccountAction records for both source and destination accounts
+            var sourceAccountAction = new AccountAction
+            {
+                AccountId = sourceAccount.AccountId,
+                ReferenceId = txn.TxnId,
+                Amount = request.Amount,
+                BeforeAccountBalance = oldSourceBalance,
+                AfterAccountBalance = sourceAccount.Balance,
+                Description = request.IsExternal ? $"External transfer - ReferenceId: {request.ReferenceId}" : request.Description ?? "",
+                AccountActionTypeId = (short)EnumAccountActionType.DecreaseBalance,
+                TxnTypeId = (short)TXN_TYPE.TransferByCorporate,
+                TargetFullName = destinationCustomer?.FirstName + " " + destinationCustomer?.LastName ?? "",
+                TenantId = sourceAccount.TenantId,
+                CreaDate = DateTime.UtcNow,
+                ModifDate = DateTime.UtcNow,
+                CreaUserId = (int)SYSTEM_USER_CODES.SystemUserId,
+                ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId,
+                StatusId = Status.Valid
+            };
+
+            var destinationAccountAction = new AccountAction
+            {
+                AccountId = destinationAccount.AccountId,
+                ReferenceId = txn.TxnId,
+                Amount = request.Amount,
+                BeforeAccountBalance = oldDestinationBalance,
+                AfterAccountBalance = destinationAccount.Balance,
+                Description = request.IsExternal ? $"External transfer received - ReferenceId: {request.ReferenceId}" : request.Description ?? "",
+                AccountActionTypeId = (short)EnumAccountActionType.IncreaseBalance,
+                TxnTypeId = (short)TXN_TYPE.TransferByCorporate,
+                TargetFullName = "", // Source customer name would go here if available
+                TenantId = destinationAccount.TenantId,
+                CreaDate = DateTime.UtcNow,
+                ModifDate = DateTime.UtcNow,
+                CreaUserId = (int)SYSTEM_USER_CODES.SystemUserId,
+                ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId,
+                StatusId = Status.Valid
+            };
+
+            _context.AccountActions.Add(sourceAccountAction);
+            _context.AccountActions.Add(destinationAccountAction);
 
             // Update AvailableCashBalance for both accounts at the end
             sourceAccount.UpdateAvailableCashBalance(request.Amount);

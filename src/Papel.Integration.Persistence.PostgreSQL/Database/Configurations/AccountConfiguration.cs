@@ -31,11 +31,11 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(account => account.Balance)
-            .HasColumnType("numeric(17,2)")
+            .HasColumnType("numeric(17,4)")
             .IsRequired();
 
         builder.Property(account => account.AvailableCashBalance)
-            .HasColumnType("numeric(17,2)");
+            .HasColumnType("numeric(17,4)");
 
         builder.Property(account => account.WalletName)
             .HasMaxLength(250);
