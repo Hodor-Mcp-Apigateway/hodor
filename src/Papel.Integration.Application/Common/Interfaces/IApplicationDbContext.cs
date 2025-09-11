@@ -1,6 +1,7 @@
 ﻿namespace Papel.Integration.Application.Common.Interfaces;
 
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Domain.Entities;
 
 public interface IApplicationDbContext
 {
@@ -16,6 +17,7 @@ public interface IApplicationDbContext
     Task MigrateAsync();
 
     DbSet<Account> Accounts { get; }
+    DbSet<AccountAction> AccountActions { get; }
     DbSet<Txn> Txns { get; }
     DbSet<Customer> Customers { get; }
     DbSet<LoadMoneyRequest> LoadMoneyRequests { get; }

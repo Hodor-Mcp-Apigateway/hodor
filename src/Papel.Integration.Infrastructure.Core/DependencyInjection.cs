@@ -11,6 +11,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddScoped<ILockService, LockService>();
+        services.AddScoped<IAccountActionService, AccountActionService>();
 
         return services;
     }
