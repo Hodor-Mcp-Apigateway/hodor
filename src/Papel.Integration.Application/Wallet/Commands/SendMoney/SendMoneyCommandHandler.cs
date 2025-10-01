@@ -161,6 +161,10 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
 
             await _context.SaveChangesAsync(cancellationToken);
 
+            // DEBUG: Log TxnId after SaveChanges
+            _logger.LogInformation("DEBUG: After SaveChanges - TxnId: {TxnId}, LoadMoneyRequestId: {LoadMoneyRequestId}",
+                txn.TxnId, loadMoneyRequest.LoadMoneyRequestId);
+
             // Create AccountAction records for both source and destination accounts
             var sourceAccountAction = new AccountAction
             {
