@@ -132,7 +132,8 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 FirmReferenceNumber = firmReferenceNumber,
                 TenantId = sourceAccount.TenantId,
                 CreaDate = DateTime.UtcNow,
-                ModifDate = DateTime.UtcNow
+                ModifDate = DateTime.UtcNow,
+                ExpenseAmount = 0
             };
 
             txn.CompleteTransaction();
@@ -152,8 +153,9 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                OrderId = orderId,
                TxnTypeId = (short)TXN_TYPE.TransferByCorporate,
                TenantId = destinationAccount.TenantId,
-                CreaDate = DateTime.UtcNow,
-                ModifDate = DateTime.UtcNow,
+               CreaDate = DateTime.UtcNow,
+               ModifDate = DateTime.UtcNow,
+               ExpenseAmount = 0
             };
 
             loadMoneyRequest.CompleteLoadMoneyRequest(sourceAccount.Balance);
@@ -161,7 +163,6 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            // DEBUG: Log TxnId after SaveChanges
             _logger.LogInformation("DEBUG: After SaveChanges - TxnId: {TxnId}, LoadMoneyRequestId: {LoadMoneyRequestId}",
                 txn.TxnId, loadMoneyRequest.LoadMoneyRequestId);
 
@@ -173,7 +174,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 Amount = request.Amount,
                 BeforeAccountBalance = oldSourceBalance,
                 AfterAccountBalance = sourceAccount.Balance,
-                Description = request.IsExternal ? $"External transfer - ReferenceId: {request.ReferenceId}" : request.Description ?? "",
+                Description = request.IsExternal ? $"{request.ReferenceId}" : request.Description ?? "",
                 AccountActionTypeId = (short)EnumAccountActionType.DecreaseBalance,
                 TxnTypeId = (short)TXN_TYPE.TransferByCorporate,
                 TargetFullName = destinationCustomer?.FirstName + " " + destinationCustomer?.LastName ?? "",
@@ -192,7 +193,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 Amount = request.Amount,
                 BeforeAccountBalance = oldDestinationBalance,
                 AfterAccountBalance = destinationAccount.Balance,
-                Description = request.IsExternal ? $"External transfer received - ReferenceId: {request.ReferenceId}" : request.Description ?? "",
+                Description = request.IsExternal ? $"{request.ReferenceId}" : request.Description ?? "",
                 AccountActionTypeId = (short)EnumAccountActionType.IncreaseBalance,
                 TxnTypeId = (short)TXN_TYPE.TransferByCorporate,
                 TargetFullName = "", // Source customer name would go here if available
