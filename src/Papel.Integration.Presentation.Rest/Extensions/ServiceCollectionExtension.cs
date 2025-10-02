@@ -8,13 +8,14 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddRestPresentation(
         this IServiceCollection services, IConfiguration configuration)
     {
-        var corsParams = configuration.GetSection("Cors").Get<List<string>>();
+        var corsSection = configuration.GetSection("Cors");
+        var corsParams = corsSection.GetChildren().Select(child => child.Value).Where(value => !string.IsNullOrEmpty(value)).ToList();
 
         ArgumentNullException.ThrowIfNull(corsParams);
 
         services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
         {
-            builder.WithOrigins([.. corsParams])
+            builder.WithOrigins([.. corsParams!,])
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();

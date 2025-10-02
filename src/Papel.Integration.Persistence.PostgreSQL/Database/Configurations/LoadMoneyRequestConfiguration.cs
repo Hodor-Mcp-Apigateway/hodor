@@ -20,13 +20,13 @@ public class LoadMoneyRequestConfiguration : IEntityTypeConfiguration<LoadMoneyR
 
         // Property configurations
         builder.Property(load => load.Amount)
-            .HasColumnType("numeric(17,2)");
+            .HasColumnType("numeric(17,4)");
 
         builder.Property(load => load.CurrentBalance)
-            .HasColumnType("numeric(17,2)");
+            .HasColumnType("numeric(17,4)");
 
         builder.Property(load => load.NewBalance)
-            .HasColumnType("numeric(17,2)");
+            .HasColumnType("numeric(17,4)");
 
         builder.Property(load => load.OrderId)
             .HasMaxLength(150);

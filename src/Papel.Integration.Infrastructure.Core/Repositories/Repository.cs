@@ -243,7 +243,7 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey>
         // IEntity implement eden entity'ler için ModifDate güncellemesi
         if (entity is IEntity baseEntity)
         {
-            baseEntity.ModifDate = DateTime.Now;
+            baseEntity.ModifDate = DateTime.UtcNow;
             baseEntity.ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId;
         }
 
@@ -256,7 +256,7 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey>
         {
             if (entity is IEntity baseEntity)
             {
-                baseEntity.ModifDate = DateTime.Now;
+                baseEntity.ModifDate = DateTime.UtcNow;
                 baseEntity.ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId;
             }
         }
@@ -269,7 +269,7 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey>
         if (entity is IEntity baseEntity)
         {
             baseEntity.StatusId = Status.Invalid;
-            baseEntity.ModifDate = DateTime.Now;
+            baseEntity.ModifDate = DateTime.UtcNow;
             baseEntity.ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId;
             _dbSet.Update(entity);
         }
@@ -295,7 +295,7 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey>
             if (entity is IEntity baseEntity)
             {
                 baseEntity.StatusId = Status.Invalid;
-                baseEntity.ModifDate = DateTime.Now;
+                baseEntity.ModifDate = DateTime.UtcNow;
                 baseEntity.ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId;
             }
         }

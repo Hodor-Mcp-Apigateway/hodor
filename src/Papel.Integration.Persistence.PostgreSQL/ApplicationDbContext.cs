@@ -1,5 +1,6 @@
 ﻿namespace Papel.Integration.Persistence.PostgreSQL;
 using Common;
+using Domain.Entities;
 using Extensions;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -26,8 +27,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<Txn> Txns => Set<Txn>();
     public DbSet<Account> Accounts => Set<Account>();
+    public DbSet<AccountAction> AccountActions => Set<AccountAction>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<LoadMoneyRequest> LoadMoneyRequests => Set<LoadMoneyRequest>();
+    public DbSet<ExternalReference> ExternalReferences => Set<ExternalReference>();
+    public DbSet<OperationLock> OperationLocks => Set<OperationLock>();
 
     public DbContext AppDbContext => this;
     public new DatabaseFacade Database => base.Database;

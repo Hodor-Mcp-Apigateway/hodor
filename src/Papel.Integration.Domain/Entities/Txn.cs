@@ -72,7 +72,7 @@ public class Txn : WalletBaseTenantEntity
         TxnStatusId = 1;
         ResultCode = 0;
         ResultDescription = "Transaction completed successfully";
-        ModifDate = DateTime.Now;
+        ModifDate = DateTime.UtcNow;
         AddDomainEvent(new TransactionCompltedDomainEvent(
             TxnId, SourceAccountId, DestinationAccountId, Amount ?? 0, OrderId));
     }
@@ -82,7 +82,7 @@ public class Txn : WalletBaseTenantEntity
         TxnStatusId = 3; // Failed
         ResultCode = errorCode;
         ResultDescription = errorMessage;
-        ModifDate = DateTime.Now;
+        ModifDate = DateTime.UtcNow;
         AddDomainEvent(new TransactionFailedEvent(
             TxnId, SourceAccountId, Amount ?? 0, errorMessage, OrderId));
     }
@@ -91,7 +91,7 @@ public class Txn : WalletBaseTenantEntity
     {
         IsRefunded = true;
         RefundedAmount = refundAmount;
-        ModifDate = DateTime.Now;
+        ModifDate = DateTime.UtcNow;
         AddDomainEvent(new TransactionRefundedEvent(
             TxnId, SourceAccountId, DestinationAccountId, refundAmount, OrderId));
     }
