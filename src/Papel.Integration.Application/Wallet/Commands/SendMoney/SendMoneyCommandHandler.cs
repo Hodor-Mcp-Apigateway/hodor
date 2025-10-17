@@ -5,6 +5,7 @@ using Common.Models;
 using Domain.AggregatesModel.ToDoAggregates.Entities;
 using Domain.Entities;
 using Domain.Enums;
+using Microsoft.EntityFrameworkCore.Storage;
 using Papel.Integration.Common.Extensions;
 
 public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, Result<SendMoneyResponse>>
@@ -27,14 +28,16 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
         SendMoneyCommand request,
         CancellationToken cancellationToken)
     {
-        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-
+        IDbContextTransaction? transaction = null;
         Customer? destinationCustomer = null;
         Account? sourceAccount = null;
         long? customerId = null;
+        var externalLockAcquired = false;
+        var accountLockAcquired = false;
 
         try
         {
+            transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
             if (request.IsExternal)
             {
@@ -75,6 +78,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
 
                 // Create operation lock for external transactions
                 await _lockService.CreateOperationLockAsync(customerId.Value, "ExternalSendMoney", cancellationToken);
+                externalLockAcquired = true;
 
                 // 3. Insert ExternalReference record within transaction
                 var externalReference = new ExternalReference
@@ -97,6 +101,7 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
 
             // Create account balance lock
             await _lockService.CreateAccountBalanceOperationLockAsync(sourceAccount.AccountId, cancellationToken);
+            accountLockAcquired = true;
 
             // For external requests, destinationAccount is already found above
             // For internal requests, get it by DestinationAccountId
@@ -246,17 +251,9 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
         }
         catch (Exception exception)
         {
-            await transaction.RollbackAsync(cancellationToken);
-
-            // Clean up locks on error
-            if (request.IsExternal && customerId.HasValue)
+            if (transaction != null)
             {
-                await _lockService.RemoveOperationLockAsync(customerId.Value, "ExternalSendMoney", cancellationToken);
-            }
-
-            if (sourceAccount != null)
-            {
-                await _lockService.RemoveAccountBalanceOperationLockAsync(sourceAccount.AccountId, cancellationToken);
+                await transaction.RollbackAsync(cancellationToken);
             }
 
             if (request.IsExternal)
@@ -274,13 +271,17 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
         }
         finally
         {
-            // Clean up locks after successful completion
-            if (request.IsExternal && customerId.HasValue)
+            if (transaction != null)
+            {
+                await transaction.DisposeAsync();
+            }
+
+            if (externalLockAcquired && customerId.HasValue)
             {
                 await _lockService.RemoveOperationLockAsync(customerId.Value, "ExternalSendMoney", cancellationToken);
             }
 
-            if (sourceAccount != null)
+            if (accountLockAcquired && sourceAccount != null)
             {
                 await _lockService.RemoveAccountBalanceOperationLockAsync(sourceAccount.AccountId, cancellationToken);
             }
