@@ -25,9 +25,7 @@ var environment = builder.Environment;
 builder.Services
     .AddSerilog(configuration)
     .AddOptions()
-    .AddNgpSqlPersistence(configuration, (provider, optionsBuilder)
-        => optionsBuilder.AddInterceptors(provider.GetRequiredService<SecondLevelCacheInterceptor>()))
-        .AddEfCoreRedisCache(configuration)
+    .AddNgpSqlPersistence(configuration)
     .AddApplication()
     .AddCoreInfrastructure()
     .AddRestPresentation(configuration)
