@@ -42,9 +42,9 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
             {
                 // 1. Check if ReferenceId already exists
                 var existingReference = await _context.ExternalReferences
-                    .FirstOrDefaultAsync(externalRef => externalRef.ReferenceId == request.ReferenceId, cancellationToken);
+                    .AnyAsync(externalRef => externalRef.ReferenceId == request.ReferenceId, cancellationToken);
 
-                if (existingReference != null)
+                if (existingReference)
                 {
                     _logger.LogStructured(LogLevel.Warning, "Integration:External:Order", request.ReferenceId!,
                         "PaymentProcessService", "Order", "Bu kayıt daha önce işlenmiştir");
