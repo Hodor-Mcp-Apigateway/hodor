@@ -32,6 +32,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<LoadMoneyRequest> LoadMoneyRequests => Set<LoadMoneyRequest>();
     public DbSet<ExternalReference> ExternalReferences => Set<ExternalReference>();
     public DbSet<OperationLock> OperationLocks => Set<OperationLock>();
+    public DbSet<MasterWhitelist> MasterWhitelists => Set<MasterWhitelist>();
+    public DbSet<DerivedWhitelist> DerivedWhitelists => Set<DerivedWhitelist>();
 
     public DbContext AppDbContext => this;
     public new DatabaseFacade Database => base.Database;
