@@ -28,5 +28,8 @@ public class OperationLockConfiguration : IEntityTypeConfiguration<OperationLock
 
         builder.Property(entity => entity.TenantId)
             .IsRequired();
+
+        builder.Property(entity => entity.CreatedAt)
+            .IsRequired();
     }
 }

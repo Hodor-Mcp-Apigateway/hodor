@@ -23,5 +23,7 @@ public interface IApplicationDbContext
     DbSet<LoadMoneyRequest> LoadMoneyRequests { get; }
     DbSet<ExternalReference> ExternalReferences { get; }
     DbSet<OperationLock> OperationLocks { get; }
+    DbSet<MasterWhitelist> MasterWhitelists { get; }
+    DbSet<DerivedWhitelist> DerivedWhitelists { get; }
     //Task SeedAsync();
 }

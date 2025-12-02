@@ -1,9 +1,7 @@
 global using System.Reflection;
-global using EFCoreSecondLevelCacheInterceptor;
 global using HealthChecks.UI.Client;
 global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 global using Papel.Integration.Application;
-global using Papel.Integration.EFCore.Caching.Redis.Extensions;
 global using Papel.Integration.Infrastructure.Core;
 global using Papel.Integration.MessageBrokers.RabbitMq.Extensions;
 global using Papel.Integration.Persistence.PostgreSQL.Extensions;

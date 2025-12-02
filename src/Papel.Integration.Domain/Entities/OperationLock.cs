@@ -20,4 +20,7 @@ public class OperationLock
     public long SystemDate { get; set; }
 
     public short TenantId { get; set; }
+
+    [Required]
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

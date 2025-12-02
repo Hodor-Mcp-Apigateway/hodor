@@ -5,44 +5,51 @@ using Common.Models;
 using Domain.AggregatesModel.ToDoAggregates.Entities;
 using Domain.Entities;
 using Domain.Enums;
+using Microsoft.EntityFrameworkCore.Storage;
 using Papel.Integration.Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, Result<SendMoneyResponse>>
 {
     private readonly IApplicationDbContext _context;
     private readonly ILogger<SendMoneyCommandHandler> _logger;
     private readonly ILockService _lockService;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
     public SendMoneyCommandHandler(
         IApplicationDbContext context,
         ILogger<SendMoneyCommandHandler> logger,
-        ILockService lockService)
+        ILockService lockService,
+        IServiceScopeFactory serviceScopeFactory)
     {
         _context = context;
         _logger = logger;
         _lockService = lockService;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     public async Task<Result<SendMoneyResponse>> Handle(
         SendMoneyCommand request,
         CancellationToken cancellationToken)
     {
-        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-
-        Customer? destinationCustomer = null;
+        IDbContextTransaction? transaction = null;
         Account? sourceAccount = null;
-        long? customerId = null;
+        Account? destinationAccount = null;
+        string? destinationFullName = null;
+        var accountLockAcquired = false;
+        var utcNow = DateTime.UtcNow;
 
         try
         {
+            transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
             if (request.IsExternal)
             {
                 // 1. Check if ReferenceId already exists
                 var existingReference = await _context.ExternalReferences
-                    .FirstOrDefaultAsync(externalRef => externalRef.ReferenceId == request.ReferenceId, cancellationToken);
+                    .AnyAsync(externalRef => externalRef.ReferenceId == request.ReferenceId, cancellationToken);
 
-                if (existingReference != null)
+                if (existingReference)
                 {
                     _logger.LogStructured(LogLevel.Warning, "Integration:External:Order", request.ReferenceId!,
                         "PaymentProcessService", "Order", "Bu kayıt daha önce işlenmiştir");
@@ -59,11 +66,19 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                     return Result.Fail<SendMoneyResponse>(new ValidationError("Geçersiz TCKN formatı"));
                 }
 
-                destinationCustomer = await _context.Customers
-                    .Include(customer => customer.Accounts.Where(account => account.StatusId == Status.Valid))
-                    .FirstOrDefaultAsync(customer => customer.Tckn == tcknLong && customer.TenantId == (short)Tenant.ConsumerWallet, cancellationToken);
+                var destinationData = await _context.Customers
+                    .Where(customer => customer.Tckn == tcknLong && customer.TenantId == (short)Tenant.ConsumerWallet)
+                    .Select(customer => new
+                    {
+                        FullName = customer.FirstName + " " + customer.LastName,
+                        AccountId = customer.Accounts
+                            .Where(account => account.StatusId == Status.Valid)
+                            .Select(account => account.AccountId)
+                            .FirstOrDefault()
+                    })
+                    .FirstOrDefaultAsync(cancellationToken);
 
-                if (destinationCustomer == null || !destinationCustomer.Accounts.Any())
+                if (destinationData == null || destinationData.AccountId == 0)
                 {
                     _logger.LogStructured(LogLevel.Warning, "Integration:External:Order", request.ReferenceId!,
                         "PaymentProcessService", "Order", "Müşteri bulunamadı veya aktif cüzdanı yok");
@@ -71,37 +86,42 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                     return Result.Fail<SendMoneyResponse>(new NotFoundError("Müşteri bulunamadı veya aktif cüzdanı yok"));
                 }
 
-                customerId = destinationCustomer.CustomerId;
+                destinationFullName = destinationData.FullName;
 
-                // Create operation lock for external transactions
-                await _lockService.CreateOperationLockAsync(customerId.Value, "ExternalSendMoney", cancellationToken);
+                destinationAccount = await _context.Accounts
+                    .FirstOrDefaultAsync(account => account.AccountId == destinationData.AccountId, cancellationToken);
 
                 // 3. Insert ExternalReference record within transaction
                 var externalReference = new ExternalReference
                 {
                     ReferenceId = request.ReferenceId!,
-                    CreaDate = DateTime.UtcNow,
-                    ModifDate = DateTime.UtcNow,
+                    CreaDate = utcNow,
+                    ModifDate = utcNow,
                     TenantId = request.TenantId
                 };
 
                 _context.ExternalReferences.Add(externalReference);
             }
 
+            var sourceAccountId = await _context.Customers
+                .Where(customer => customer.CustomerId == request.SourceCustomerId)
+                .SelectMany(customer => customer.Accounts
+                    .Where(account => account.StatusId == Status.Valid && account.IsDefault)
+                    .Select(account => account.AccountId))
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (sourceAccountId == 0)
+                return Result.Fail<SendMoneyResponse>(new NotFoundError("Source account not found"));
+
             sourceAccount = await _context.Accounts
-                                .Where(account => account.CustomerId == request.SourceCustomerId)
-                                .FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(account => account.AccountId == sourceAccountId, cancellationToken);
 
             if (sourceAccount == null)
                 return Result.Fail<SendMoneyResponse>(new NotFoundError("Source account not found"));
 
             // Create account balance lock
             await _lockService.CreateAccountBalanceOperationLockAsync(sourceAccount.AccountId, cancellationToken);
-
-            // For external requests, destinationAccount is already found above
-            // For internal requests, get it by DestinationAccountId
-            var destinationAccount = destinationCustomer!.Accounts.FirstOrDefault(
-                                             account => account.IsDefault);
+            accountLockAcquired = true;
 
             if (destinationAccount == null)
                 return Result.Fail<SendMoneyResponse>(new NotFoundError("Destination account not found"));
@@ -131,8 +151,8 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 OrderId = orderId,
                 FirmReferenceNumber = firmReferenceNumber,
                 TenantId = sourceAccount.TenantId,
-                CreaDate = DateTime.UtcNow,
-                ModifDate = DateTime.UtcNow,
+                CreaDate = utcNow,
+                ModifDate = utcNow,
                 ExpenseAmount = 0
             };
 
@@ -153,18 +173,13 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                OrderId = orderId,
                TxnTypeId = (short)TXN_TYPE.TransferByCorporate,
                TenantId = destinationAccount.TenantId,
-               CreaDate = DateTime.UtcNow,
-               ModifDate = DateTime.UtcNow,
+               CreaDate = utcNow,
+               ModifDate = utcNow,
                ExpenseAmount = 0
             };
 
             loadMoneyRequest.CompleteLoadMoneyRequest(sourceAccount.Balance);
             _context.LoadMoneyRequests.Add(loadMoneyRequest);
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-            _logger.LogInformation("DEBUG: After SaveChanges - TxnId: {TxnId}, LoadMoneyRequestId: {LoadMoneyRequestId}",
-                txn.TxnId, loadMoneyRequest.LoadMoneyRequestId);
 
             // Create AccountAction records for both source and destination accounts
             var sourceAccountAction = new AccountAction
@@ -177,10 +192,10 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 Description = request.IsExternal ? $"{request.ReferenceId}" : request.Description ?? "",
                 AccountActionTypeId = (short)EnumAccountActionType.DecreaseBalance,
                 TxnTypeId = (short)TXN_TYPE.TransferByCorporate,
-                TargetFullName = destinationCustomer?.FirstName + " " + destinationCustomer?.LastName ?? "",
+                TargetFullName = destinationFullName ?? "",
                 TenantId = sourceAccount.TenantId,
-                CreaDate = DateTime.UtcNow,
-                ModifDate = DateTime.UtcNow,
+                CreaDate = utcNow,
+                ModifDate = utcNow,
                 CreaUserId = (int)SYSTEM_USER_CODES.SystemUserId,
                 ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId,
                 StatusId = Status.Valid
@@ -198,8 +213,8 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 TxnTypeId = (short)TXN_TYPE.TransferByCorporate,
                 TargetFullName = "", // Source customer name would go here if available
                 TenantId = destinationAccount.TenantId,
-                CreaDate = DateTime.UtcNow,
-                ModifDate = DateTime.UtcNow,
+                CreaDate = utcNow,
+                ModifDate = utcNow,
                 CreaUserId = (int)SYSTEM_USER_CODES.SystemUserId,
                 ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId,
                 StatusId = Status.Valid
@@ -215,11 +230,36 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 // Destination account receives money, so AvailableCashBalance increases
                 destinationAccount.AvailableCashBalance = (destinationAccount.AvailableCashBalance ?? 0) + request.Amount;
                 destinationAccount.ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId;
-                destinationAccount.ModifDate = DateTime.UtcNow;
+                destinationAccount.ModifDate = utcNow;
             }
 
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
+
+            var sourceCustomerId = sourceAccount.CustomerId;
+            var srcAccountId = sourceAccount.AccountId;
+            var destinationCustomerId = destinationAccount.CustomerId;
+            var destAccountId = destinationAccount.AccountId;
+            var transactionId = txn.TxnId;
+            var tenantId = destinationAccount.TenantId;
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await ProcessWhitelistAfterTransactionAsync(
+                        sourceCustomerId,
+                        srcAccountId,
+                        destinationCustomerId,
+                        destAccountId,
+                        transactionId,
+                        tenantId);
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogError(exception, "Error processing whitelist after transaction. TxnId: {TxnId}", transactionId);
+                }
+            }, cancellationToken);
 
             if (request.IsExternal)
             {
@@ -241,22 +281,14 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
                 NewDestinationBalance = destinationAccount.Balance,
                 IsSuccessful = true,
                 ResultMessage = request.IsExternal ? "Başarılı" : "Transfer completed successfully",
-                TransactionDate = DateTime.UtcNow
+                TransactionDate = utcNow
             });
         }
         catch (Exception exception)
         {
-            await transaction.RollbackAsync(cancellationToken);
-
-            // Clean up locks on error
-            if (request.IsExternal && customerId.HasValue)
+            if (transaction != null)
             {
-                await _lockService.RemoveOperationLockAsync(customerId.Value, "ExternalSendMoney", cancellationToken);
-            }
-
-            if (sourceAccount != null)
-            {
-                await _lockService.RemoveAccountBalanceOperationLockAsync(sourceAccount.AccountId, cancellationToken);
+                await transaction.RollbackAsync(cancellationToken);
             }
 
             if (request.IsExternal)
@@ -274,16 +306,66 @@ public sealed class SendMoneyCommandHandler : IRequestHandler<SendMoneyCommand, 
         }
         finally
         {
-            // Clean up locks after successful completion
-            if (request.IsExternal && customerId.HasValue)
+            if (transaction != null)
             {
-                await _lockService.RemoveOperationLockAsync(customerId.Value, "ExternalSendMoney", cancellationToken);
+                await transaction.DisposeAsync();
             }
 
-            if (sourceAccount != null)
+            if (accountLockAcquired && sourceAccount != null)
             {
                 await _lockService.RemoveAccountBalanceOperationLockAsync(sourceAccount.AccountId, cancellationToken);
             }
         }
+    }
+
+    private async Task ProcessWhitelistAfterTransactionAsync(
+        long sourceCustomerId,
+        long sourceAccountId,
+        long destinationCustomerId,
+        long destinationAccountId,
+        long transactionId,
+        short tenantId)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+
+        var isSourceInMasterWhitelist = await dbContext.MasterWhitelists
+            .AnyAsync(mw => mw.CustomerId == sourceCustomerId && mw.IsEnabled && mw.StatusId == Status.Valid);
+
+        if (!isSourceInMasterWhitelist)
+        {
+            return;
+        }
+
+        var isDestinationAlreadyInDerivedWhitelist = await dbContext.DerivedWhitelists
+            .AnyAsync(dw => dw.CustomerId == destinationCustomerId && dw.StatusId == Status.Valid);
+
+        if (isDestinationAlreadyInDerivedWhitelist)
+        {
+            return;
+        }
+
+        var utcNow = DateTime.UtcNow;
+        var derivedWhitelist = new DerivedWhitelist
+        {
+            CustomerId = destinationCustomerId,
+            AccountId = destinationAccountId,
+            DerivedFromCustomerId = sourceCustomerId,
+            DerivedFromAccountId = sourceAccountId,
+            FirstTransactionId = transactionId,
+            TenantId = tenantId,
+            CreaDate = utcNow,
+            ModifDate = utcNow,
+            CreaUserId = (int)SYSTEM_USER_CODES.SystemUserId,
+            ModifUserId = (int)SYSTEM_USER_CODES.ModifUserId,
+            StatusId = Status.Valid
+        };
+
+        dbContext.DerivedWhitelists.Add(derivedWhitelist);
+        await dbContext.SaveChangesAsync(CancellationToken.None);
+
+        _logger.LogInformation(
+            "Added customer {DestinationCustomerId} to DerivedWhitelist. DerivedFrom: {SourceCustomerId}, TxnId: {TxnId}",
+            destinationCustomerId, sourceCustomerId, transactionId);
     }
 }
