@@ -1,11 +1,8 @@
 global using System.Reflection;
-<<<<<<< HEAD
-=======
 //#if (EnableRedisCache)
 global using EFCoreSecondLevelCacheInterceptor;
 global using Papel.Integration.EFCore.Caching.Redis.Extensions;
 //#endif
->>>>>>> b321969 (change rabbitmq to kafka and masstransit to wolverinefx)
 global using HealthChecks.UI.Client;
 global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 global using Papel.Integration.Application;

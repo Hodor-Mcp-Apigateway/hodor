@@ -27,9 +27,6 @@ builder.Host.UseKafkaMessageBroker(configuration);
 builder.Services
     .AddSerilog(configuration)
     .AddOptions()
-<<<<<<< HEAD
-    .AddNgpSqlPersistence(configuration)
-=======
 //#if (EnableRedisCache)
     .AddNgpSqlPersistence(configuration, (provider, optionsBuilder)
         => optionsBuilder.AddInterceptors(provider.GetRequiredService<SecondLevelCacheInterceptor>()))
@@ -37,7 +34,6 @@ builder.Services
 //#else
     .AddNgpSqlPersistence(configuration)
 //#endif
->>>>>>> b321969 (change rabbitmq to kafka and masstransit to wolverinefx)
     .AddApplication()
     .AddCoreInfrastructure()
 //#if (EnableRest)
