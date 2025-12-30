@@ -1,4 +1,4 @@
-﻿global using System.Diagnostics;
+global using System.Diagnostics;
 global using System.Diagnostics.CodeAnalysis;
 global using System.Reflection;
 
@@ -11,7 +11,9 @@ global using Mapster;
 global using MapsterMapper;
 global using Ardalis.Specification;
 global using FluentValidation.Results;
-global using MassTransit;
+//#if (EnableKafka)
+global using Wolverine;
+//#endif
 global using MediatR.Pipeline;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.DependencyInjection.Extensions;

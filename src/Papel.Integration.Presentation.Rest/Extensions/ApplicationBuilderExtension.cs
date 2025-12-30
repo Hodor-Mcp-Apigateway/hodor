@@ -14,8 +14,7 @@ public static class ApplicationBuilderExtension
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseSwagger(configuration)
-            .UseCors("CorsPolicy")
+        app.UseCors("CorsPolicy")
             .UseExceptionHandler();
 
         return app;

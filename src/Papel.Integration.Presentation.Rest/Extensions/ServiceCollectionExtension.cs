@@ -22,7 +22,7 @@ public static class ServiceCollectionExtension
         }));
 
         services.AddHttpContextAccessor()
-            .AddSwagger(configuration, Assembly.GetExecutingAssembly())
+            .AddOpenApi()
             .AddValidatorsFromAssemblyContaining<IApplicationDbContext>(filter:null, includeInternalTypes:true)
             .AddExceptionHandler<GlobalExceptionHandler>()
             .AddProblemDetails()

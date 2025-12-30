@@ -17,7 +17,7 @@ public class BaseWebApplicationFactory<TStartup> : WebApplicationFactory<TStartu
                 typeof(PostgreSqlContainer ), ContainerFactory.Create<PostgreSqlContainer >()
             },
             {
-                typeof(RabbitMqContainer), ContainerFactory.Create<RabbitMqContainer>()
+                typeof(KafkaContainer), ContainerFactory.Create<KafkaContainer>()
             },
             {
                 typeof(RedisContainer), ContainerFactory.Create<RedisContainer>()
@@ -50,6 +50,7 @@ public class BaseWebApplicationFactory<TStartup> : WebApplicationFactory<TStartu
         await base.DisposeAsync().ConfigureAwait(false);
         await Task.WhenAll(Containers.Select(pair => pair.Value.DisposeAsync().AsTask()))
             .ConfigureAwait(false);
+        GC.SuppressFinalize(this);
     }
 
     protected T GetContainer<T>() where T : class

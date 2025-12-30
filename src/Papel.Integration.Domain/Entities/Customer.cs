@@ -2,9 +2,9 @@ namespace Papel.Integration.Domain.AggregatesModel.ToDoAggregates.Entities;
 
 using Common;
 using Enums;
-using Integration.Events.Customer.EmailVerified;
-using Integration.Events.Customer.Register;
-using Integration.Events.Customer.Update;
+using Papel.Integration.Events.Customer.EmailVerified;
+using Papel.Integration.Events.Customer.Register;
+using Papel.Integration.Events.Customer.Update;
 
 [Table("Customer", Schema = "customer")]
 public class Customer : WalletBaseTenantEntity

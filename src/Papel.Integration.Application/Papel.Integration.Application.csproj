@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
         <PackageReference Include="Ardalis.Specification" />
@@ -11,12 +11,17 @@
         <PackageReference Include="MediatR" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" />
         <PackageReference Update="Microsoft.SourceLink.GitHub" />
+<!--#if (EnableKafka) -->
+        <PackageReference Include="WolverineFx" />
+<!--#endif -->
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Papel.Integration.Common\Papel.Integration.Common.csproj" />
       <ProjectReference Include="..\Papel.Integration.Domain\Papel.Integration.Domain.csproj" />
-      <ProjectReference Include="..\Papel.Integration.MessageBrokers.RabbitMq\Papel.Integration.MessageBrokers.RabbitMq.csproj" />
+<!--#if (EnableKafka) -->
+      <ProjectReference Include="..\Papel.Integration.MessageBrokers.Kafka\Papel.Integration.MessageBrokers.Kafka.csproj" />
+<!--#endif -->
     </ItemGroup>
 
     <ItemGroup>

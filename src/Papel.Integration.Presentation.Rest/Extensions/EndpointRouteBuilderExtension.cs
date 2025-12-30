@@ -4,6 +4,8 @@ public static class EndpointRouteBuilderExtension
 {
     public static IEndpointRouteBuilder MapRestEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
+        endpointRouteBuilder.MapOpenApi();
+        endpointRouteBuilder.MapScalarApiReference();
         endpointRouteBuilder.MapControllers();
         return endpointRouteBuilder;
     }

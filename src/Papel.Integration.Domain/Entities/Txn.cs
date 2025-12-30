@@ -3,7 +3,7 @@ namespace Papel.Integration.Domain.AggregatesModel.ToDoAggregates.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 using Common;
 using Events;
-using Integration.Events.Transaction;
+using Papel.Integration.Events.Transaction;
 
 [Table("Txn", Schema = "txn")]
 public class Txn : WalletBaseTenantEntity

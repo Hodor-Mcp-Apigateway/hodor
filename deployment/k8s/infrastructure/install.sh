@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 
 set -Eeuo pipefail
 trap clean_up SIGINT SIGTERM ERR EXIT
@@ -9,12 +9,11 @@ function clean_up {
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
 
-helm install rabbitmq bitnami/rabbitmq
+helm install kafka bitnami/kafka
 helm install postgresql bitnami/postgresql
 helm install redis bitnami/redis
 
 export POSTGRES_PASSWORD=$(kubectl get secret postgresql -o json | jq -r '.data["postgres-password"]' | base64 -d)
-export RABBITMQ_PASSWORD=$(kubectl get secret rabbitmq  -o json | jq -r '.data["rabbitmq-password"]' | base64 -d)
 export REDIS_PASSWORD=$(kubectl get secret redis  -o json | jq -r '.data["redis-password"]'| base64 -d)
 
 cat <<EOF > ./appsettings.secrets.json
@@ -25,14 +24,15 @@ cat <<EOF > ./appsettings.secrets.json
           "HealthCheckEnabled" : true,
           "LoggingEnabled": true
         },
-        "RabbitMqConnection": {
-          "ConnectionString": "rabbitmq://user:$RABBITMQ_PASSWORD@rabbitmq:5672",
-          "HealthCheckEnabled" : true
-        },
         "RedisConnection": {
           "ConnectionString": "redis-headless,password=$REDIS_PASSWORD,ssl=False,abortConnect=False",
           "HealthCheckEnabled" : true
         }
+    },
+    "Kafka": {
+        "BootstrapServers": "kafka:9092",
+        "ConsumerGroupId": "template-service",
+        "HealthCheckEnabled": true
     }
 }
 EOF

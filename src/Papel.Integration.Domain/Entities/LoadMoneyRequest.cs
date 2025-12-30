@@ -1,7 +1,7 @@
 namespace Papel.Integration.Domain.AggregatesModel.ToDoAggregates.Entities;
 
 using Common;
-using Integration.Events.Transaction;
+using Papel.Integration.Events.Transaction;
 using System.ComponentModel.DataAnnotations.Schema;
 
 

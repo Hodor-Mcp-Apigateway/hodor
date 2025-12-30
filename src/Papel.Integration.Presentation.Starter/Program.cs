@@ -1,7 +1,5 @@
 #pragma warning disable CA1506
 
-using Papel.Integration.Infrastructure.Core.Extensions;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var envFileName = $".env.{builder.Environment.EnvironmentName}";
@@ -22,17 +20,38 @@ builder.Configuration
 var configuration = builder.Configuration;
 var environment = builder.Environment;
 
+//#if (EnableKafka)
+builder.Host.UseKafkaMessageBroker(configuration);
+//#endif
+
 builder.Services
     .AddSerilog(configuration)
     .AddOptions()
+<<<<<<< HEAD
     .AddNgpSqlPersistence(configuration)
+=======
+//#if (EnableRedisCache)
+    .AddNgpSqlPersistence(configuration, (provider, optionsBuilder)
+        => optionsBuilder.AddInterceptors(provider.GetRequiredService<SecondLevelCacheInterceptor>()))
+    .AddEfCoreRedisCache(configuration)
+//#else
+    .AddNgpSqlPersistence(configuration)
+//#endif
+>>>>>>> b321969 (change rabbitmq to kafka and masstransit to wolverinefx)
     .AddApplication()
     .AddCoreInfrastructure()
+//#if (EnableRest)
     .AddRestPresentation(configuration)
+//#endif
+//#if (EnableGrpc)
     .AddGrpcPresentation()
+//#endif
+//#if (EnableGraphQL)
     .AddGraphQLPresentation()
+//#endif
+//#if (EnableSignalR)
     .AddSignalRPresentation()
-    .AddMessageBroker(configuration)
+//#endif
     .AddHealthChecks();
 
 builder.Services.AddOpenTelemetry()
@@ -43,21 +62,33 @@ builder.Services.AddOpenTelemetry()
             serviceInstanceId: Environment.MachineName))
     .WithTracing(trackerBuilder => trackerBuilder
         .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+//#if (EnableRest)
         .AddRestOpenTelemetry()
+//#endif
         .AddNgpSqlPersistenceOpenTelemetry()
-        .AddMassTransitOpenTelemetry()
+//#if (EnableKafka)
+        .AddWolverineOpenTelemetry()
+//#endif
         .AddOtlpExporter()
-        //.AddConsoleExporter()
     );
 
 var app = builder.Build();
+
+//#if (EnableRest)
 app.UseRestPresentation(configuration, environment)
     .UseRouting();
 app.UseAuthorization();
 app.MapRestEndpoints();
+//#endif
+//#if (EnableGrpc)
 app.MapGrpcEndpoints();
+//#endif
+//#if (EnableGraphQL)
 app.MapGraphQLEndpoints();
+//#endif
+//#if (EnableSignalR)
 app.MapHubEndpoints();
+//#endif
 
 app.MapHealthChecks("/health/startup");
 app.MapHealthChecks("/healthz", new HealthCheckOptions { Predicate = _ => false });

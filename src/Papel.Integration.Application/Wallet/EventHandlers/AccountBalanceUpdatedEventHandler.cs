@@ -23,7 +23,7 @@ public sealed class AccountBalanceUpdatedEventHandler : INotificationHandler<Acc
         // - Cache güncellemesi
         // - External service notification
         // - Audit logging
-        // - RabbitMQ message publishing
+        // - Kafka message publishing
         // gibi işlemler yapılabilir
 
         return Task.CompletedTask;

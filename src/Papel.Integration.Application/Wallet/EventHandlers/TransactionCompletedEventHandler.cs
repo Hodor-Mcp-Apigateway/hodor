@@ -1,3 +1,4 @@
+//#if (EnableKafka)
 namespace Papel.Integration.Application.Wallet.EventHandlers;
 
 using Events.Transaction;
@@ -5,13 +6,13 @@ using Events.Transaction;
 public sealed class TransactionCompletedEventHandler : INotificationHandler<TransactionCompletedIntegrationEvent>
 {
     private readonly ILogger<TransactionCompletedEventHandler> _logger;
-    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IMessageBus _messageBus;
     private readonly IMapper _mapper;
-    public TransactionCompletedEventHandler(ILogger<TransactionCompletedEventHandler> logger, IPublishEndpoint publishEndpoint, IMapper mapper)
+    public TransactionCompletedEventHandler(ILogger<TransactionCompletedEventHandler> logger, IMessageBus messageBus, IMapper mapper)
     {
         _mapper = mapper.ThrowIfNull();
         _logger = logger.ThrowIfNull();
-        _publishEndpoint = publishEndpoint.ThrowIfNull();
+        _messageBus = messageBus.ThrowIfNull();
     }
 
     public async Task Handle(TransactionCompletedIntegrationEvent notification, CancellationToken cancellationToken)
@@ -28,8 +29,9 @@ public sealed class TransactionCompletedEventHandler : INotificationHandler<Tran
                       .AdaptToTypeAsync<TransactionCompletedIntegrationEvent>()
                       .ConfigureAwait(false);
 
-        await _publishEndpoint.Publish(createEvent, cancellationToken)
+        await _messageBus.PublishAsync(createEvent)
             .ConfigureAwait(false);
 
     }
 }
+//#endif

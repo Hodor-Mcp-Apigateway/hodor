@@ -1,4 +1,4 @@
-﻿apiVersion: v1
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "template-service.fullname" . }}
@@ -40,14 +40,15 @@ data:
           "HealthCheckEnabled" : true,
           "LoggingEnabled": true
         },
-        "RabbitMqConnection": {
-          "ConnectionString": "rabbitmq://rabbitmq:rabbitmq@localhost:5672",
-          "HealthCheckEnabled" : true
-        },
         "RedisConnection": {
           "ConnectionString": "localhost,ssl=False,abortConnect=False",
           "HealthCheckEnabled" : true
         }
+      },
+      "Kafka": {
+        "BootstrapServers": "localhost:9092",
+        "ConsumerGroupId": "template-service",
+        "HealthCheckEnabled": true
       },
       "Services": {
         "IdentityService": "https://localhost:5001/api/v1/"

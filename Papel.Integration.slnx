@@ -58,25 +58,47 @@
     <Project Path="src/Papel.Integration.Domain/Papel.Integration.Domain.csproj" />
   </Folder>
   <Folder Name="/src/Infrastructure/">
+<!--#if (EnableRedisCache) -->
     <Project Path="src/Papel.Integration.EFCore.Caching.Redis/Papel.Integration.EFCore.Caching.Redis.csproj" />
+<!--#endif -->
     <Project Path="src/Papel.Integration.Infrastructure.Core/Papel.Integration.Infrastructure.Core.csproj" />
-    <Project Path="src/Papel.Integration.MessageBrokers.RabbitMq/Papel.Integration.MessageBrokers.RabbitMq.csproj" />
     <Project Path="src/Papel.Integration.Persistence.PostgreSQL/Papel.Integration.Persistence.PostgreSQL.csproj" />
+<!--#if (EnableKafka) -->
+    <Project Path="src/Papel.Integration.MessageBrokers.Kafka/Papel.Integration.MessageBrokers.Kafka.csproj" />
+<!--#endif -->
   </Folder>
   <Folder Name="/src/Presentation/">
+<!--#if (EnableGraphQL) -->
     <Project Path="src/Papel.Integration.Presentation.GraphQL/Papel.Integration.Presentation.GraphQL.csproj" />
+<!--#endif -->
+<!--#if (EnableGrpc) -->
     <Project Path="src/Papel.Integration.Presentation.Grpc/Papel.Integration.Presentation.Grpc.csproj" />
+<!--#endif -->
+<!--#if (EnableRest) -->
     <Project Path="src/Papel.Integration.Presentation.Rest/Papel.Integration.Presentation.Rest.csproj" />
+<!--#endif -->
+<!--#if (EnableSignalR) -->
     <Project Path="src/Papel.Integration.Presentation.SignalR/Papel.Integration.Presentation.SignalR.csproj" />
+<!--#endif -->
     <Project Path="src/Papel.Integration.Presentation.Starter/Papel.Integration.Presentation.Starter.csproj" />
   </Folder>
+<!--#if (EnableTests) -->
   <Folder Name="/tests/">
     <Project Path="tests/Papel.Integration.Application.Tests/Papel.Integration.Application.Tests.csproj" />
     <Project Path="tests/Papel.Integration.Common.Tests/Papel.Integration.Common.Tests.csproj" />
     <Project Path="tests/Papel.Integration.Domain.Tests/Papel.Integration.Domain.Tests.csproj" />
+<!--#if (EnableGraphQL) -->
     <Project Path="tests/Papel.Integration.Presentation.GraphQL.Tests/Papel.Integration.Presentation.GraphQL.Tests.csproj" />
+<!--#endif -->
+<!--#if (EnableGrpc) -->
     <Project Path="tests/Papel.Integration.Presentation.Grpc.Tests/Papel.Integration.Presentation.Grpc.Tests.csproj" />
+<!--#endif -->
+<!--#if (EnableRest) -->
     <Project Path="tests/Papel.Integration.Presentation.Rest.Tests/Papel.Integration.Presentation.Rest.Tests.csproj" />
+<!--#endif -->
+<!--#if (EnableSignalR) -->
     <Project Path="tests/Papel.Integration.Presentation.SignalR.Tests/Papel.Integration.Presentation.SignalR.Tests.csproj" />
+<!--#endif -->
   </Folder>
+<!--#endif -->
 </Solution>

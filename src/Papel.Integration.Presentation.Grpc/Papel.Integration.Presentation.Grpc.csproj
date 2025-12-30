@@ -11,8 +11,11 @@
     </ItemGroup>
 
     <ItemGroup>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Google.Protobuf" />
-      <PackageReference Include="Grpc.Core" />
       <PackageReference Include="Grpc.Core.Api" />
       <PackageReference Include="OpenTelemetry" />
       <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" />
@@ -21,10 +24,6 @@
       <PackageReference Include="protobuf-net.Grpc.AspNetCore.Reflection" />
       <PackageReference Include="protobuf-net.Reflection" />
       <PackageReference Include="System.ServiceModel.Primitives" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageVersion Update="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.0.0-rc9.14" />
     </ItemGroup>
 
 </Project>

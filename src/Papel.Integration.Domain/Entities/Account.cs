@@ -6,7 +6,7 @@ using Enums;
 
 
 using System.ComponentModel.DataAnnotations.Schema;
-using Integration.Events.Account;
+using Papel.Integration.Events.Account;
 
 [Table("Account", Schema = "customer")]
 public class Account : WalletBaseTenantEntity

@@ -1,10 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <PropertyGroup>
+      <RootNamespace>Papel.Integration.MessageBrokers.Kafka</RootNamespace>
+    </PropertyGroup>
+
     <ItemGroup>
-      <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" />
+      <PackageReference Include="AspNetCore.HealthChecks.Kafka" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-      <PackageReference Include="NKZSoft.Service.Configuration.MassTransit.RabbitMq" />
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+      <PackageReference Include="WolverineFx" />
+      <PackageReference Include="WolverineFx.Kafka" />
       <PackageReference Include="OpenTelemetry.Api" />
     </ItemGroup>
 
@@ -12,5 +18,5 @@
       <ProjectReference Include="..\Papel.Integration.Common\Papel.Integration.Common.csproj" />
       <ProjectReference Include="..\Papel.Integration.Events\Papel.Integration.Events.csproj" />
     </ItemGroup>
-  
+
 </Project>
