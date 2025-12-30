@@ -15,13 +15,13 @@ internal sealed class PostgresConnectionValidator : AbstractValidator<PostgresCo
             .NotNull().WithMessage("HealthCheckEnabled must be specified");
     }
 
-    private bool BeValidPostgresConnectionString(string connectionString)
+    private static bool BeValidPostgresConnectionString(string connectionString)
     {
         if (string.IsNullOrEmpty(connectionString))
             return false;
 
-        return connectionString.Contains("Server=") &&
-               connectionString.Contains("Database=") &&
-               connectionString.Contains("userid=");
+        return connectionString.Contains("Server=", StringComparison.OrdinalIgnoreCase) &&
+               connectionString.Contains("Database=", StringComparison.OrdinalIgnoreCase) &&
+               connectionString.Contains("userid=", StringComparison.OrdinalIgnoreCase);
     }
 }

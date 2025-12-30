@@ -1,6 +1,5 @@
 namespace Papel.Integration.Presentation.Grpc.Extensions;
 
-using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -25,14 +24,13 @@ internal sealed class ExceptionConverter : JsonConverter<Exception>
 
             if (reader.TokenType == JsonTokenType.PropertyName)
             {
-                var propName = (reader.GetString() ?? string.Empty).ToLower(CultureInfo.InvariantCulture);
+                var propName = reader.GetString() ?? string.Empty;
                 reader.Read();
 
                 switch (propName)
                 {
-                    case var _ when propName.Equals(nameof(JsonException.Message).ToLower(CultureInfo.InvariantCulture), StringComparison.Ordinal):
-                        new JsonException(reader.GetString());
-                        break;
+                    case var _ when propName.Equals(nameof(JsonException.Message), StringComparison.OrdinalIgnoreCase):
+                        return new JsonException(reader.GetString());
                 }
             }
         }

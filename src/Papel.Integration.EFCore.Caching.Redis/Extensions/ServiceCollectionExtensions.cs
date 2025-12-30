@@ -45,8 +45,8 @@ public static class ServiceCollectionExtensions
             var section = configuration.GetSection(CacheConfigurationSection.SectionName);
             var connectionString = section["ConnectionString"] ?? 
                                  Environment.GetEnvironmentVariable("CONNECTIONSTRINGS__REDISCACHECONNECTION__CONNECTIONSTRING");
-            var healthCheckEnabled = section.GetValue<bool>("HealthCheckEnabled") || 
-                                   Environment.GetEnvironmentVariable("CONNECTIONSTRINGS__REDISCACHECONNECTION__HEALTHCHECKENABLED")?.ToLowerInvariant() == "true";
+            var healthCheckEnabled = section.GetValue<bool>("HealthCheckEnabled") ||
+                                   string.Equals(Environment.GetEnvironmentVariable("CONNECTIONSTRINGS__REDISCACHECONNECTION__HEALTHCHECKENABLED"), "true", StringComparison.OrdinalIgnoreCase);
             
             var redisConfig = new RedisConnection
             {
