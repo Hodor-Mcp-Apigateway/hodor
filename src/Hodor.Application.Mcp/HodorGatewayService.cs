@@ -95,7 +95,7 @@ public class HodorGatewayService : IHodorGateway
     private static (string Server, string Tool) ParseServerTool(string fullName)
     {
         var idx = fullName.IndexOf(':');
-        if (idx < 0) throw new ArgumentException($"Tool must be server:tool_name, got: {fullName}");
+        if (idx < 0) throw new ArgumentException($"Tool must be server:tool_name, got: {fullName}", nameof(fullName));
         return (fullName[..idx], fullName[(idx + 1)..]);
     }
 }
