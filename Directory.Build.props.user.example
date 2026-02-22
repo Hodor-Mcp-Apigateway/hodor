@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Optional local overrides. Copy to Directory.Build.props.user (gitignored).
+  Use when you need different settings locally (e.g. relax warnings during dev).
+  No need to change anything before push - CI uses Directory.Build.props.
+-->
+<Project>
+  <!-- Example: disable TreatWarningsAsErrors locally
+  <PropertyGroup>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  -->
+</Project>

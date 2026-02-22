@@ -7,6 +7,7 @@
 *.rsuser
 *.suo
 *.user
+Directory.Build.props.user
 *.userosscache
 *.sln.docstates
 
@@ -387,3 +388,28 @@ FodyWeavers.xsd
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.secrets.json
+appsettings.*.local.json
+
+# Rust (samples)
+samples/target/
+samples/Cargo.lock
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Private docs (agent-specific, local notes)
+docs/

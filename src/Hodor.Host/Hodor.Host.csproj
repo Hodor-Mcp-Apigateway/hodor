@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>Hodor.Host</RootNamespace>
+    <AssemblyName>Hodor.Host</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hodor.Core\Hodor.Core.csproj" />
+    <ProjectReference Include="..\Hodor.Application.Mcp\Hodor.Application.Mcp.csproj" />
+    <ProjectReference Include="..\Hodor.Infrastructure.Core\Hodor.Infrastructure.Core.csproj" />
+    <ProjectReference Include="..\Hodor.Infrastructure.ProcessManager\Hodor.Infrastructure.ProcessManager.csproj" />
+    <ProjectReference Include="..\Hodor.Persistence\Hodor.Persistence.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
+    <PackageReference Include="prometheus-net.AspNetCore" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
+    <PackageReference Include="DotNetEnv" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,16 @@
+### Hodor MCP Gateway - REST Client (VS Code)
+### Install: REST Client extension
+### Base URL - change if needed
+@baseUrl = http://localhost:8080
+
+### Health check
+GET {{baseUrl}}/health
+
+### Ready check
+GET {{baseUrl}}/ready
+
+### List MCP tools
+GET {{baseUrl}}/api/tools
+
+### Health info (detailed)
+GET {{baseUrl}}/health/info

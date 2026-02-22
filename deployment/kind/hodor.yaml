@@ -1,0 +1,92 @@
+# Hodor MCP Gateway
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hodor-config
+  namespace: hodor
+data:
+  appsettings.json: |
+    {
+      "Logging": { "LogLevel": { "Default": "Information" } },
+      "ConnectionStrings": {
+        "PostgreSQL": "Host=postgres;Port=5432;Database=hodor;Username=postgres;Password=postgres"
+      }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hodor
+  namespace: hodor
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+      name: http
+  selector:
+    app: hodor
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hodor
+  namespace: hodor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hodor
+  template:
+    metadata:
+      labels:
+        app: hodor
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: busybox
+          command: ['sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done']
+      containers:
+        - name: hodor
+          image: hodor-mcp-gateway:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
+          volumeMounts:
+            - name: config
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            periodSeconds: 5
+      volumes:
+        - name: config
+          configMap:
+            name: hodor-config

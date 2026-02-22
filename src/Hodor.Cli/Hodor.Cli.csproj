@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Hodor.Cli</RootNamespace>
+    <AssemblyName>hodor</AssemblyName>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>hodor</ToolCommandName>
+    <Description>Hodor MCP Gateway - CLI for install, deploy, health</Description>
+    <PackageId>Hodor.Cli</PackageId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+  </ItemGroup>
+</Project>

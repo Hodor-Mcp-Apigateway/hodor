@@ -1,0 +1,13 @@
+apiVersion: v2
+name: hodor
+description: Hodor MCP Gateway - Universal MCP API Gateway
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - mcp
+  - gateway
+  - ai
+home: https://github.com/Hodor-Mcp-Apigateway-inc/hodor
+maintainers:
+  - name: Hodor

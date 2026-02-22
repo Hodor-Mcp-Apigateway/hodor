@@ -9,56 +9,21 @@ data:
     {
       "Logging": {
         "LogLevel": {
-          "Default": "Debug",
-          "System": "Debug",
-          "Microsoft": "Debug"
+          "Default": "Information",
+          "System": "Information",
+          "Microsoft": "Information"
         }
       },
       "Serilog": {
         "MinimumLevel": {
-          "Default": "Verbose",
-          "Override": {
-            "System.Net.Http": "Verbose"
-          }
-        },
-        "EnableDbLogging": true
+          "Default": "Information"
+        }
       },
       "Kestrel": {
-        "endpoints": {
-          "http": {
-            "url": "http://0.0.0.0:80"
-          },
-          "http2": {
-            "Protocols": "Http2",
-            "url": "http://0.0.0.0:81"
+        "Endpoints": {
+          "Http": {
+            "Url": "http://0.0.0.0:8080"
           }
         }
       },
-      "ConnectionStrings": {
-        "PostgresConnection": {
-          "ConnectionString": "Host=localhost;Port=5432;Uid=postgres;Password=postgres;Database=template_db;",
-          "HealthCheckEnabled" : true,
-          "LoggingEnabled": true
-        },
-        "RedisConnection": {
-          "ConnectionString": "localhost,ssl=False,abortConnect=False",
-          "HealthCheckEnabled" : true
-        }
-      },
-      "Kafka": {
-        "BootstrapServers": "localhost:9092",
-        "ConsumerGroupId": "template-service",
-        "HealthCheckEnabled": true
-      },
-      "Services": {
-        "IdentityService": "https://localhost:5001/api/v1/"
-      },
-      "Cors": [
-        "http://localhost:9000",
-        "http://localhost:5055"
-      ],
-      "Swagger":{
-        "Enabled": true,
-        "AuthorizationEnabled": false
-      }
     }

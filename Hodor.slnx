@@ -1,0 +1,75 @@
+<Solution>
+  <Folder Name="/ci-cd/">
+    <File Path=".github/dependabot.yml" />
+    <File Path=".github/images/wizard.png" />
+    <File Path=".github/ISSUE_TEMPLATE/bug_report.md" />
+    <File Path=".github/ISSUE_TEMPLATE/feature_request.md" />
+    <File Path=".github/release-drafter.yml" />
+    <File Path=".github/workflows/build-by-branch.yaml" />
+    <File Path=".github/workflows/build-by-tag.yaml" />
+    <File Path=".github/workflows/cleanup.yaml" />
+  </Folder>
+  <Folder Name="/deployment/">
+    <File Path="Dockerfile" />
+  </Folder>
+  <Folder Name="/deployment/docker/">
+    <File Path="deployment/docker/docker-compose-app.yaml" />
+    <File Path="deployment/docker/docker-compose-infrastructure.yaml" />
+    <File Path="deployment/docker/docker-compose.sh" />
+  </Folder>
+  <Folder Name="/deployment/k8s/">
+    <File Path="deployment/k8s/README.md" />
+  </Folder>
+  <Folder Name="/deployment/k8s/.helm/">
+    <File Path="deployment/k8s/.helm/template-service/.helmignore" />
+    <File Path="deployment/k8s/.helm/template-service/Chart.yaml" />
+    <File Path="deployment/k8s/.helm/template-service/values.yaml" />
+  </Folder>
+  <Folder Name="/deployment/k8s/.helm/template-service/" />
+  <Folder Name="/deployment/k8s/.helm/template-service/charts/" />
+  <Folder Name="/deployment/k8s/.helm/template-service/templates/">
+    <File Path="deployment/k8s/.helm/template-service/templates/configmap.yaml" />
+    <File Path="deployment/k8s/.helm/template-service/templates/deployment.yaml" />
+    <File Path="deployment/k8s/.helm/template-service/templates/hpa.yaml" />
+    <File Path="deployment/k8s/.helm/template-service/templates/ingress.yaml" />
+    <File Path="deployment/k8s/.helm/template-service/templates/NOTES.txt" />
+    <File Path="deployment/k8s/.helm/template-service/templates/service.yaml" />
+    <File Path="deployment/k8s/.helm/template-service/templates/serviceaccount.yaml" />
+    <File Path="deployment/k8s/.helm/template-service/templates/_helpers.tpl" />
+  </Folder>
+  <Folder Name="/deployment/k8s/.helm/template-service/templates/tests/">
+    <File Path="deployment/k8s/.helm/template-service/templates/tests/test-connection.yaml" />
+  </Folder>
+  <Folder Name="/deployment/k8s/infrastructure/">
+    <File Path="deployment/k8s/infrastructure/install.sh" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="src/Hodor.Core/Hodor.Core.csproj" />
+  </Folder>
+  <Folder Name="/src/Application/">
+    <Project Path="src/Hodor.Application.Mcp/Hodor.Application.Mcp.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Hodor.Infrastructure.Core/Hodor.Infrastructure.Core.csproj" />
+    <Project Path="src/Hodor.Infrastructure.ProcessManager/Hodor.Infrastructure.ProcessManager.csproj" />
+  </Folder>
+  <Folder Name="/src/Persistence/">
+    <Project Path="src/Hodor.Persistence/Hodor.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/Host/">
+    <Project Path="src/Hodor.Host/Hodor.Host.csproj" />
+  </Folder>
+  <Folder Name="/src/Cli/">
+    <Project Path="src/Hodor.Cli/Hodor.Cli.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Hodor.Application.Mcp.Tests/Hodor.Application.Mcp.Tests.csproj" />
+    <Project Path="tests/Hodor.Core.Tests/Hodor.Core.Tests.csproj" />
+    <Project Path="tests/Hodor.Host.Tests/Hodor.Host.Tests.csproj" />
+    <Project Path="tests/Hodor.Infrastructure.ProcessManager.Tests/Hodor.Infrastructure.ProcessManager.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,60 @@
+# Hodor MCP Gateway - Helm values
+
+replicaCount: 1
+
+image:
+  repository: hodor-mcp-gateway
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+hodor:
+  env:
+    ASPNETCORE_ENVIRONMENT: Production
+    ASPNETCORE_URLS: http://+:8080
+
+postgres:
+  enabled: true
+  image: pgvector/pgvector
+  tag: pg16
+  persistence:
+    enabled: true
+    size: 2Gi
+  auth:
+    username: postgres
+    password: postgres
+    database: hodor
+  # connectionString: "Host=external;Port=5432;Database=hodor;..."  # when postgres.enabled=false
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: hodor.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+# Horizontal Pod Autoscaler
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

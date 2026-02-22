@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hodor.fullname" . }}
+  labels:
+    {{- include "hodor.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "hodor.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "hodor.selectorLabels" . | nindent 8 }}
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      {{- if .Values.postgres.enabled }}
+      initContainers:
+        - name: wait-postgres
+          image: busybox
+          command: ['sh', '-c', 'until nc -z {{ include "hodor.fullname" . }}-postgres 5432; do echo waiting for postgres; sleep 2; done']
+      {{- end }}
+      containers:
+        - name: hodor
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: {{ .Values.hodor.env.ASPNETCORE_ENVIRONMENT | default "Production" }}
+            - name: ASPNETCORE_URLS
+              value: {{ .Values.hodor.env.ASPNETCORE_URLS | default "http://+:8080" }}
+            {{- if .Values.postgres.enabled }}
+            - name: ConnectionStrings__PostgreSQL
+              value: "Host={{ include "hodor.fullname" . }}-postgres;Port=5432;Database={{ .Values.postgres.auth.database }};Username={{ .Values.postgres.auth.username }};Password={{ .Values.postgres.auth.password }}"
+            {{- else if .Values.postgres.connectionString }}
+            - name: ConnectionStrings__PostgreSQL
+              value: {{ .Values.postgres.connectionString | quote }}
+            {{- end }}
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            periodSeconds: 5
+            successThreshold: 1
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

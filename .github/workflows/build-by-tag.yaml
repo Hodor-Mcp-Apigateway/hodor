@@ -1,46 +1,34 @@
-name: build-by-tag
+name: release
 
 on:
   push:
     tags:
-    - '**'           # Push events to every tag including hierarchical tags like v1.0/beta
+      - "v*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
+    name: Build & Docker (${{ github.ref_name }})
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
-        cache: true
-        cache-dependency-path: '**/packages.lock.json'
-    - name: Restore Dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build -c Release /p:PublishDir=./publish/app --no-restore
-    - name: Test
-      run:  dotnet test ./tests/Papel.Integration.Application.Tests --configuration Release --no-build
-    - name: Publish
-      run: dotnet publish -c Release -p:PublishDir=./publish/app --no-restore --no-build
-    - name: Login to Github Packages
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build image and push to GitHub Container Registry
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.meta.outputs.tags }}
-    - name: Image digest
-      run: echo ${{ steps.docker_build.outputs.digest }}
-    - name: Drafts release notes
-      uses: release-drafter/release-drafter@v6
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore Hodor.slnx
+
+      - name: Build
+        run: dotnet build Hodor.slnx -c Release --no-restore
+
+      - name: Docker build
+        run: docker build -t hodor-mcp-gateway:${{ github.ref_name }} .

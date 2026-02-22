@@ -1,20 +1,27 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
-
+name: Feature Request
+about: Suggest a new feature for Hodor
+title: '[FEATURE] '
+labels: enhancement
+assignees: kursatarslan
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## Problem
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+<!-- What problem does this solve? -->
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+## Proposed Solution
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+<!-- How should it work? -->
+
+## Alternatives Considered
+
+<!-- Other approaches you've thought about -->
+
+## Use Case
+
+<!-- Who benefits and how? Example scenario. -->
+
+## Additional Context
+
+<!-- Mockups, links, references -->

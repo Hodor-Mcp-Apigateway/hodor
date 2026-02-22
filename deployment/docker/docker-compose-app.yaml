@@ -1,22 +1,18 @@
-﻿version: '3.9'
+version: '3.9'
 
 services:
-  template:
+  hodor:
     build:
       context: ./../../
       dockerfile: Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
-      OTEL_DOTNET_EXPERIMENTAL_ASPNETCORE_ENABLE_GRPC_INSTRUMENTATION: 1
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__PostgreSQL: "Host=postgres;Port=5432;Database=hodor;Username=postgres;Password=postgres"
     ports:
       - "0.0.0.0:8080:8080"
-      - "0.0.0.0:8081:8081"
     networks:
       - dev-network
     depends_on:
       postgres:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-      redis:
         condition: service_healthy

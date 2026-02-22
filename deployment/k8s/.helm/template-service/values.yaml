@@ -1,18 +1,21 @@
-﻿# Default values for template-service.
+# Default values for template-service.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: ecr.com/microservice-template
+  repository: hodor-mcp-gateway
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.10.0-alpha"
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+postgres:
+  # Override in production with secret
+  connectionString: Host=postgresql;Port=5432;Database=hodor;Username=postgres;Password=postgres
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -40,6 +43,7 @@ service:
   type: ClusterIP
   port: 80
   targetPort: 8080
+  # Hodor listens on 8080
 
 ingress:
   enabled: false

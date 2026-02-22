@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/Hodor-Mcp-Apigateway/hodor/blob/main/README.md
+    about: Check the README for usage and setup
+  - name: Discussions
+    url: https://github.com/Hodor-Mcp-Apigateway/hodor/discussions
+    about: Ask questions and discuss ideas

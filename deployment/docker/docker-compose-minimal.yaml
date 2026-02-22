@@ -1,0 +1,41 @@
+# Minimal: PostgreSQL + Hodor only (no Kafka, Redis, Jaeger)
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hodor
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks:
+      - dev-network
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "PGPASSWORD=postgres pg_isready -U postgres -d hodor"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  hodor:
+    build:
+      context: ./../../
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__PostgreSQL: "Host=postgres;Port=5432;Database=hodor;Username=postgres;Password=postgres"
+    ports:
+      - "0.0.0.0:8080:8080"
+    networks:
+      - dev-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres:
+
+networks:
+  dev-network:
+    driver: bridge

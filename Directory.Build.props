@@ -1,5 +1,8 @@
 <Project>
   <PropertyGroup>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -17,20 +20,21 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
+  <!-- SourceLink only in CI - local builds work without git remote -->
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup>
-    <NoWarn>$(NoWarn);NU1902;NU1903;NU1904;NETSDK1206;xUnit1028;CS1591</NoWarn>
+    <NoWarn>$(NoWarn);NU1902;NU1903;NU1904;NETSDK1206;xUnit1028;CS1591;MA0048;AV1554;AV1555;AV1580;AV1500;AV1706;CA1014;CA1305;AV1561;AV1564;AV2305;AV1210;MA0002;MA0004;MA0006</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,38 +1,43 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+name: Bug Report
+about: Report a bug in Hodor MCP API Gateway
+title: '[BUG] '
+labels: bug
+assignees: kursatarslan
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## Bug Description
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+<!-- Clear description of the bug -->
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## Steps to Reproduce
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+1. 
+2. 
+3. 
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+## Expected Behavior
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+<!-- What should happen -->
 
-**Additional context**
-Add any other context about the problem here.
+## Actual Behavior
+
+<!-- What actually happens -->
+
+## Environment
+
+- **Hodor version**: <!-- e.g. 1.0.0 -->
+- **OS**: <!-- e.g. macOS 15, Ubuntu 24.04 -->
+- **.NET version**: <!-- e.g. 10.0.100 -->
+- **Deployment**: <!-- Docker Compose / Helm / Kind / Local -->
+- **MCP Client**: <!-- Claude / Cursor / VS Code / Other -->
+
+## Logs
+
+```
+<!-- Paste relevant logs here -->
+```
+
+## Additional Context
+
+<!-- Screenshots, config files, etc. -->

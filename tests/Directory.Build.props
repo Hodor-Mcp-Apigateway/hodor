@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    <CoverletOutput>$(MSBuildThisFileDirectory)../TestResults/</CoverletOutput>
+  </PropertyGroup>
+</Project>
